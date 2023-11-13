@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.conf import settings
 
 import os
+import csv
 import numpy as np
 import torch
 import cv2
@@ -96,7 +97,7 @@ class UploadCsv(GenericViewSet):
     def save_csv(self,request):
         file_path = './backend/media/' # 指定保存文件的文件夹路径
 
-        file_path = os.path.join(file_path,'vibration')
+        file_path = os.path.join(file_path,'vibration/')
         # 若文件夹不存在则新建
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -108,7 +109,29 @@ class UploadCsv(GenericViewSet):
             fs = FileSystemStorage(location=file_path)
             fs.save(uploaded_file.name, uploaded_file)
 
-            return Response(status=status.HTTP_200_OK)
+            # 从保存的.csv文件中读取数据并返回前端
+            x_data=[]
+            y_data=[]
+            z_data=[]
+
+            with open(file_path + uploaded_file.name,'r') as file:
+                reader =csv.reader(file,delimiter=',')
+                # for row in enumerate(reader):
+                # 单个文件数据量过大，暂时设置只返回前10000条数据
+                for i,row in enumerate(reader):
+                    if i>=10000:
+                        break
+                    x_data.append(float(row[0].strip()))
+                    y_data.append(float(row[1].strip()))
+                    z_data.append(float(row[2].strip()))
+
+            return Response({
+                'yData':{
+                    'x':x_data,
+                    'y':y_data,
+                    'z':z_data,
+                }
+            },status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             # 处理异常情况
