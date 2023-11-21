@@ -119,6 +119,12 @@ class UploadCsv(GenericViewSet):
 
         try:
             uploaded_file = request.FILES['csv']  # 获取上传的图像文件
+            min = request.POST['min']
+            max = request.POST['max']
+            min = float(min)
+            max = float(max)
+
+
 
             # 创建文件系统存储对象
             fs = FileSystemStorage(location=file_path)
@@ -134,23 +140,60 @@ class UploadCsv(GenericViewSet):
                 # for row in enumerate(reader):
                 # 单个文件数据量过大，暂时设置只返回前10000条数据
                 for i,row in enumerate(reader):
-                    if i>=10000:
-                        break
                     x_data.append(float(row[0].strip()))
                     y_data.append(float(row[1].strip()))
                     z_data.append(float(row[2].strip()))
+
+            # 筛选异常值
+            x_abnormal = [ x for x in x_data if x < min or x > max]
+            x_data = [ x for x in x_data if x >= min and x <= max]
+            y_abnormal = [ y for y in y_data if y < min or y > max]
+            y_data = [ y for y in y_data if y >= min and y <= max]
+            z_abnormal = [ z for z in z_data if z < min or z > max]
+            z_data = [ z for z in z_data if z >= min and z <= max]
+
+            x_abnormal_set = set(x_abnormal)
+            y_abnormal_set = set(y_abnormal)
+            z_abnormal_set = set(z_abnormal)
+
+            # 数据平滑处理
+            def data_smoothing(data,num_parts,abnormal_set):
+                n = len(data)
+                chunk_size = n // num_parts  # 每份大小
+                result = []
+                for i in range(0, n, chunk_size):
+                    chunk = data[i:i + chunk_size]
+                    # for element in chunk:
+                    #     if element in abnormal_set:
+                    #         result.append(element)
+                    average = sum(chunk) / len(chunk)
+                    result.append(average)
+                return result
+
+            parts = 3600
+            x_data = data_smoothing(x_data,parts,x_abnormal_set)
+            y_data = data_smoothing(y_data,parts,y_abnormal_set)
+            z_data = data_smoothing(z_data,parts,z_abnormal_set)
 
             return Response({
                 'yData':{
                     'x':x_data,
                     'y':y_data,
                     'z':z_data,
+                },
+                'abnormal':{
+                    'x':x_abnormal,
+                    'y':y_abnormal,
+                    'z':z_abnormal,
                 }
             },status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 def segment_image(input_image_data, output_dir='/root/StudyOnCurtainWall/backend/media/segged', sam_checkpoint="backend\sam_vit_h_4b8939.pth", model_type="vit_h"):
     # Check if CUDA is available

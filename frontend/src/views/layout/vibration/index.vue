@@ -3,10 +3,25 @@
     <el-button @click="GoToDash">进入仪表盘</el-button>
 
     <div>
+        <h2>1.请上传振动数据文件（csv）</h2>
         <input type="file" ref="fileInput"  accept=".csv" @change="handleFileInputChange" />
         <button @click="uploadFile" :disabled="!selectedFile">上传文件</button>
     </div>
-    <div id="main" style="width: 100%;height:400px;"></div>
+
+    <h2 v-if="selectedFile" style="margin:30px">2.请选择异常阈值</h2>
+    <div v-if="selectedFile" class="slider-block" style="width: 400px;">
+        <el-slider v-model="range" range step="0.1" :min="-5" :max="5"  range-start-label range-end-label/>
+        <div>异常值上下限：【{{ range[0] }}，{{ range[1] }}】</div>
+    </div>
+
+    <h2 v-if="selectedFile" style="margin:30px">3.异常值筛选</h2>
+    <div v-if="selectedFile" id="abnormal" style="width: 100%;height:500px;">
+    </div>
+
+
+    <h2 v-if="selectedFile" style="margin:30px">4.风震图显示</h2>
+    <div v-if="selectedFile" id="main" style="width: 100%;height:500px;">
+    </div>
 </template>
 
 <script setup>
@@ -28,6 +43,8 @@
 
     var chartData = ref();
 
+    const range = ref([-0.5, 0.5])
+
     const fileInputRef = ref(null);
     const selectedFile = ref(null); //已选文件
 
@@ -46,30 +63,100 @@
         const file = event.target.files[0];
         selectedFile.value = file;
         console.log(selectedFile.value);
+        console.log(typeof range[0]);
     };
-    const uploadFile =  () => {
-        if (selectedFile.value) {
-            let formData = new FormData();
-            formData.append('csv', selectedFile.value);
-            UploadCsv(formData)
-            .then(function (result) {  
-                // 当前返回1小时振动数据：约45万条，数量过大，渲染速度慢
-                // 当前设置为只返回前10000条数据（后续看怎么处理）
+
+
+    const uploadFile = () => {
+    if (selectedFile.value) {
+        let formData = new FormData();
+        formData.append('csv', selectedFile.value);
+
+        formData.append('min', range.value[0]); //最低阈值 
+        formData.append('max', range.value[1]); //最高阈值
+        UploadCsv(formData)
+            .then(function (result) {
                 chartData.value = result.data;
 
                 var myChart = echarts.init(document.getElementById('main'));
+                var myAbnormalChart = echarts.init(document.getElementById('abnormal'));
+
                 let option;
-                let yData=chartData.value.yData;
+                let optionAbnormal;
+
+                let yData = chartData.value.yData;
+                let yDataAbnormal = chartData.value.abnormal;
+
                 let series = [];
+                let seriesAbnormal = [];
 
                 for (let name in yData) {
-                series.push({
-                    name: name,
-                    type: 'line',
-                    data: yData[name],
-                    smooth: false,
-                })
+                    series.push({
+                        name: name,
+                        type: 'line',
+                        data: yData[name],
+                        smooth: false,
+                        markLine: {
+                            data: [
+                                { type: 'none', name: 'Max', yAxis: range.value[1] },
+                                { type: 'none', name: 'Min', yAxis: range.value[0] }
+                            ],
+                            itemStyle: {
+                                normal: {
+                                    lineStyle: {
+                                        color: '#ff0000',
+                                    }
+                                }
+                            },
+                            label: {
+                                position: 'end',
+                                formatter: function (params) {
+                                    if (params.name === 'Max') {
+                                        return '异常上限';
+                                    } else if (params.name === 'Min') {
+                                        return '异常下限';
+                                    }
+                                },
+                                color: '#ff0000'
+                            }
+                        }
+                    })
                 }
+
+                for (let name in yDataAbnormal) {
+                    seriesAbnormal.push({
+                        name: name,
+                        type: 'line',
+                        data: yDataAbnormal[name],
+                        smooth: false,
+                        markLine: {
+                            data: [
+                                { type: 'none', name: 'Max', yAxis: range.value[1] },
+                                { type: 'none', name: 'Min', yAxis: range.value[0] }
+                            ],
+                            itemStyle: {
+                                normal: {
+                                    lineStyle: {
+                                        color: '#ff0000',
+                                    }
+                                }
+                            },
+                            label: {
+                                position: 'end',
+                                formatter: function (params) {
+                                    if (params.name === 'Max') {
+                                        return '异常上限';
+                                    } else if (params.name === 'Min') {
+                                        return '异常下限';
+                                    }
+                                },
+                                color: '#ff0000'
+                            }
+                        }
+                    })
+                }
+
+
                 option = {
                     title: {
                         text: 'Curtain Vib'
@@ -86,30 +173,56 @@
                         bottom: '3%',
                         containLabel: true
                     },
-                    // toolbox: {
-                    //     feature: {
-                    //         saveAsImage: {}
-                    //     }
-                    // },
                     xAxis: {
                         type: 'category',
                         boundaryGap: false,
                         data: []
                     },
                     yAxis: {
-                        type: 'value'
+                        type: 'value',
                     },
-                    series: series
+                    series: series,
                 };
+
+                optionAbnormal = {
+                    title: {
+                        text: 'Curtain Abnormal Vib'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['x', 'y', 'z']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: []
+                    },
+                    yAxis: {
+                        type: 'value',
+                        // min: range.value[0], // 设置 yAxis 的最小值为最低阈值和数据中的最小值中的较小者
+                        // max: range.value[1] // 设置 yAxis 的最大值为最高阈值和数据中的最大值中的较大者
+                    },
+                    series: seriesAbnormal,
+                };
+
+
+
                 myChart.setOption(option);
+                myAbnormalChart.setOption(optionAbnormal);
             })
             .catch(function (error) {
                 console.log(error);
             });
-        }
-
-
-    };
+    }
+};
 
 </script>
 
@@ -117,6 +230,10 @@
 
     .upload-container{
         margin:30px;
+    }
+
+    .slider-block{
+        margin: auto;
     }
 
 </style>
