@@ -8,7 +8,7 @@ export function UploadCsv(FormData) {  // 在 src/views/login/index.vue 里调�
         headers: {
             'Content-Type': 'application/form-data', // 设置请求头
         },
-        url: '/backend/savecsv/',  // 与后端接口对应！！！
+        url: '/backend/vibration/uploadCsv/',  // 与后端接口对应！！！
         data: FormData, // 使用FormData作为请求体
     }).then(function (response) {  // then 表示成功接收到响应后的操作
         if (response.status === 200) {
@@ -23,3 +23,27 @@ export function UploadCsv(FormData) {  // 在 src/views/login/index.vue 里调�
         console.log(error);
     });
 }
+
+// 异常值过滤
+export function FilterOutlier(FormData) {  
+    return Request({  // 发送请求
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/form-data', // 设置请求头
+        },
+        url: '/backend/vibration/filterOutlier/', 
+        data: FormData, 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            Message.success("筛选成功！");
+            
+            console.log(response); 
+            return response;  
+        } else {
+            Message.error("筛选失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}
+

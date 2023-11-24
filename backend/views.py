@@ -21,7 +21,7 @@ import sys
 #sys.path.append('/root/StudyOnCurtainWall/backend')
 from backend.segment_anything import sam_model_registry, SamAutomaticMaskGenerator
 
-# Create your views here.
+
 class GetImg(GenericViewSet):
     serializer_class = ImageSerializer
 
@@ -119,16 +119,23 @@ class UploadCsv(GenericViewSet):
 
         try:
             uploaded_file = request.FILES['csv']  # 获取上传的图像文件
-            min = request.POST['min']
-            max = request.POST['max']
-            min = float(min)
-            max = float(max)
+            print(uploaded_file)
+            # building = request.POST['building']
+            # equipment = request.POST['equipment']
+            # start_time = request.POST['start_time']
+            # end_time = request.POST['end_time']
+            #
+            # print(uploaded_file.name,building,equipment,start_time,end_time)
 
-
-
-            # 创建文件系统存储对象
-            fs = FileSystemStorage(location=file_path)
-            fs.save(uploaded_file.name, uploaded_file)
+            # 判断文件是否存在
+            if os.path.exists(file_path + uploaded_file.name):
+                #文件已存在
+                print("该文件已上传过")
+            else:
+                #文件尚不存在
+                # 创建文件系统存储对象
+                fs = FileSystemStorage(location=file_path)
+                fs.save(uploaded_file.name, uploaded_file)
 
             # 从保存的.csv文件中读取数据并返回前端
             x_data=[]
@@ -137,43 +144,15 @@ class UploadCsv(GenericViewSet):
 
             with open(file_path + uploaded_file.name,'r') as file:
                 reader =csv.reader(file,delimiter=',')
-                # for row in enumerate(reader):
-                # 单个文件数据量过大，暂时设置只返回前10000条数据
                 for i,row in enumerate(reader):
                     x_data.append(float(row[0].strip()))
                     y_data.append(float(row[1].strip()))
                     z_data.append(float(row[2].strip()))
 
-            # 筛选异常值
-            x_abnormal = [ x for x in x_data if x < min or x > max]
-            x_data = [ x for x in x_data if x >= min and x <= max]
-            y_abnormal = [ y for y in y_data if y < min or y > max]
-            y_data = [ y for y in y_data if y >= min and y <= max]
-            z_abnormal = [ z for z in z_data if z < min or z > max]
-            z_data = [ z for z in z_data if z >= min and z <= max]
-
-            x_abnormal_set = set(x_abnormal)
-            y_abnormal_set = set(y_abnormal)
-            z_abnormal_set = set(z_abnormal)
-
-            # 数据平滑处理
-            def data_smoothing(data,num_parts,abnormal_set):
-                n = len(data)
-                chunk_size = n // num_parts  # 每份大小
-                result = []
-                for i in range(0, n, chunk_size):
-                    chunk = data[i:i + chunk_size]
-                    # for element in chunk:
-                    #     if element in abnormal_set:
-                    #         result.append(element)
-                    average = sum(chunk) / len(chunk)
-                    result.append(average)
-                return result
-
             parts = 3600
-            x_data = data_smoothing(x_data,parts,x_abnormal_set)
-            y_data = data_smoothing(y_data,parts,y_abnormal_set)
-            z_data = data_smoothing(z_data,parts,z_abnormal_set)
+            x_data = data_smoothing(x_data,parts)
+            y_data = data_smoothing(y_data,parts)
+            z_data = data_smoothing(z_data,parts)
 
             return Response({
                 'yData':{
@@ -181,59 +160,113 @@ class UploadCsv(GenericViewSet):
                     'y':y_data,
                     'z':z_data,
                 },
-                'abnormal':{
-                    'x':x_abnormal,
-                    'y':y_abnormal,
-                    'z':z_abnormal,
-                }
+                'csv_url': file_path + uploaded_file.name,
             },status=status.HTTP_200_OK)
+
         except Exception as e:
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+class FilterOutlier(GenericViewSet):
+    serializer_class = ImageSerializer
+
+    @action(methods=['post'], detail=False)
+    def filter_outlier(self,request):
+        file_path = os.path.join('./backend/media/','vibration/')
+        try:
+            min = request.POST['min']
+            max = request.POST['max']
+            file_url = request.POST['csv_url']
+            min = float(min)
+            max = float(max)
+
+            print(file_url)
+
+            # 从保存的.csv文件中读取数据并返回前端
+            x_data=[]
+            y_data=[]
+            z_data=[]
+
+            with open(file_url,'r') as file:
+                reader =csv.reader(file,delimiter=',')
+                for i,row in enumerate(reader):
+                    x_data.append(float(row[0].strip()))
+                    y_data.append(float(row[1].strip()))
+                    z_data.append(float(row[2].strip()))
+
+            # 筛选异常值
+            x_abnormal = [ x for x in x_data if x < min or x > max]
+            y_abnormal = [ y for y in y_data if y < min or y > max]
+            z_abnormal = [ z for z in z_data if z < min or z > max]
+
+            return Response({
+                'yData':{
+                    'x':x_abnormal,
+                    'y':y_abnormal,
+                    'z':z_abnormal,
+                },
+            },status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            # 处理异常情况
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def segment_image(input_image_data, output_dir='/root/StudyOnCurtainWall/backend/media/segged', sam_checkpoint="backend\sam_vit_h_4b8939.pth", model_type="vit_h"):
-    # Check if CUDA is available
-    if torch.cuda.is_available():
-        device = "cuda"
-    else:
-        device = "cpu"
-    # Create the output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
-    print("here")
-    
-    # Load the SAM model
-    sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
-    sam.to(device=device)
-    mask_generator = SamAutomaticMaskGenerator(sam)
+# def segment_image(input_image_data, output_dir='/root/StudyOnCurtainWall/backend/media/segged', sam_checkpoint="backend\sam_vit_h_4b8939.pth", model_type="vit_h"):
+#     # Check if CUDA is available
+#     if torch.cuda.is_available():
+#         device = "cuda"
+#     else:
+#         device = "cpu"
+#     # Create the output directory if it doesn't exist
+#     os.makedirs(output_dir, exist_ok=True)
+#     print("here")
+#
+#     # Load the SAM model
+#     sam = sam_model_registry[model_type](checkpoint=sam_checkpoint)
+#     sam.to(device=device)
+#     mask_generator = SamAutomaticMaskGenerator(sam)
+#
+#     # Process the input image data
+#     image = cv2.cvtColor(input_image_data, cv2.COLOR_BGR2RGB)
+#     width = int(image.shape[1] * 25 / 100)
+#     height = int(image.shape[0]* 25 / 100)
+#     size = width * height
+#     image = cv2.resize(image, (width, height))
+#     masks = mask_generator.generate(image)
+#
+#     def generate_anns(anns, image, size):
+#         original_image = image
+#         if len(anns) == 0:
+#             return
+#
+#         sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
+#         img = np.ones((sorted_anns[0]['segmentation'].shape[0], sorted_anns[0]['segmentation'].shape[1], 4))
+#         img[:, :, 3] = 0
+#
+#         for index, ann in enumerate(sorted_anns):
+#             m = ann['segmentation']
+#             if ann['area'] > size / 24 and ann['area'] < size / 2:
+#                 img_tosave = np.where(m[..., None] == 1, original_image, 255)
+#                 img_tosave = cv2.cvtColor(img_tosave, cv2.COLOR_BGR2RGB)
+#                 output_filename = f"{index}_saved.png"
+#                 output_path = os.path.join(output_dir, output_filename)
+#                 cv2.imwrite(output_path, img_tosave)
+#
+#     generate_anns(masks, image, size)
 
-    # Process the input image data
-    image = cv2.cvtColor(input_image_data, cv2.COLOR_BGR2RGB)
-    width = int(image.shape[1] * 25 / 100)
-    height = int(image.shape[0]* 25 / 100)
-    size = width * height
-    image = cv2.resize(image, (width, height))
-    masks = mask_generator.generate(image)
 
-    def generate_anns(anns, image, size):
-        original_image = image
-        if len(anns) == 0:
-            return
+# 数据平滑处理
 
-        sorted_anns = sorted(anns, key=(lambda x: x['area']), reverse=True)
-        img = np.ones((sorted_anns[0]['segmentation'].shape[0], sorted_anns[0]['segmentation'].shape[1], 4))
-        img[:, :, 3] = 0
-
-        for index, ann in enumerate(sorted_anns):
-            m = ann['segmentation']
-            if ann['area'] > size / 24 and ann['area'] < size / 2:
-                img_tosave = np.where(m[..., None] == 1, original_image, 255)
-                img_tosave = cv2.cvtColor(img_tosave, cv2.COLOR_BGR2RGB)
-                output_filename = f"{index}_saved.png"
-                output_path = os.path.join(output_dir, output_filename)
-                cv2.imwrite(output_path, img_tosave)
-
-    generate_anns(masks, image, size)
+def data_smoothing(data, num_parts):
+    n = len(data)
+    chunk_size = n // num_parts  # 每份大小
+    result = []
+    for i in range(0, n, chunk_size):
+        chunk = data[i:i + chunk_size]
+        average = sum(chunk) / len(chunk)
+        result.append(average)
+    return result
