@@ -12,6 +12,7 @@
         <segmentation v-if="choice == 'segmentation'"/>
         <explosion_identify v-if="choice == 'explosion_identify'"/>
         <vibration v-if="choice == 'vibration'"/>
+        <vibrationData v-if="choice == 'vibration_data'"/>
     </div>
 </template>
 
@@ -22,6 +23,7 @@ import dashboard from '@/views/layout/dashboard/index.vue'
 import segmentation from '@/views/layout/segmentation/index.vue'
 import explosion_identify from '@/views/layout/explosion_identify/index.vue'
 import vibration from '@/views/layout/vibration/index.vue'
+import vibrationData from '@/views/layout//vibration_data/index.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute();
@@ -47,6 +49,9 @@ const updateLogic = () => {
   }
   else if (route.params.choice === 'vibration') {
     choice.value = 'vibration'
+  }
+  else if (route.params.choice === 'vibration_data'){
+    choice.value = 'vibration_data'
   }
 };
 </script>

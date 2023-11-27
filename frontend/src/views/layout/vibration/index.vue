@@ -4,30 +4,9 @@
 
     <div>
         <h2>1.请上传振动数据文件（csv）</h2>
-        <!-- <div style="width: 50%; margin:auto;text-align: center;">
-            <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
-                <el-form-item label="采集时间" prop="time">
-                <el-date-picker
-                    v-model="selectedInfo.time"
-                    type="datetimerange"
-                    range-separator="至"
-                    start-placeholder="开始时间"
-                    end-placeholder="结束时间"
-                />
-                </el-form-item>
-                <el-form-item label="选择设备" prop="equipment">
-                    <el-cascader v-model="selectedInfo.equipment" 
-                        :options="options" 
-                        placeholder="请选择建筑/传感器编号" 
-                        @change="change_select" 
-                        clearable/>
-                </el-form-item>
-            </el-form>
-        </div> -->
         <input type="file" ref="fileInput"  accept=".csv" @change="handleFileInputChange" />
         <button @click="uploadFile" :disabled="!selectedFile">上传文件</button>
     </div>
-
 
     <h2 v-if="showNormal" style="margin:30px">2.风震图显示</h2>
     <div id="main" style="width: 100%;height:500px;"></div>
@@ -63,135 +42,6 @@
     const showNormal = ref(false);//显示平滑后的风震图
     const showAbnormal = ref(false); //显示异常风震图
 
-    // 暂时写死：后期存储到数据库中，可以由用户自行添加建筑、设备型号；
-    // 从后端获取这些数据或选择
-    const options = ref([
-        {
-            'value': 'A楼',
-            'label': 'A楼',
-            'children':[
-                {
-                   'value': 'A77C5238',
-                    'label': 'A77C5238',
-                },
-                {
-                    'value': 'F853ED49',
-                    'label': 'F853ED49',
-                },
-                {
-                    'value': '3326F78D',
-                    'label': '3326F78D',
-                },
-                {
-                    'value': '350E6EFF',
-                    'label': '350E6EFF',
-                },
-            ]
-        },
-        {
-            'value': '综合楼',
-            'label': '综合楼',
-            'children':[
-                {
-                    'value': 'E884C99D',
-                    'label': 'E884C99D',
-                },
-                {
-                    'value': '7749E4D9',
-                    'label': '7749E4D9',
-                },
-                {
-                    'value': '7A6BA8C8',
-                    'label': '7A6BA8C8',
-                },
-                {
-                    'value': '8850A7D7',
-                    'label': '8850A7D7',
-                },
-                {
-                    'value': '4787BE3A',
-                    'label': '4787BE3A',
-                },
-            ]
-        },
-        {
-            'value': '经管大楼',
-            'label': '经管大楼',
-            'children':[
-                {
-                    'value': '29FA1867',
-                    'label': '29FA1867',
-                },
-                {
-                    'value': '350E6EFF',
-                    'label': '350E6EFF',
-                },
-                {
-                    'value': '3326F78D',
-                    'label': '3326F78D',
-                },
-                {
-                    'value': 'A77C5238',
-                    'label': 'A77C5238',
-                },
-                {
-                    'value': 'E43AC643',
-                    'label': 'E43AC643',
-                },
-                {
-                    'value': '4787BE3A',
-                    'label': '4787BE3A',
-                },
-            ]
-        },
-    ]);
-
-    // 已选传感器信息
-    // const selectedInfo = ref({
-    //     'equipment': [],
-    //     //数组：equipment[0]代表建筑，equipment[1]代表传感器编号
-    //     'time': [],
-    //     //时间数组：time[0]开始时间，time[1]是结束时间
-    // })
-
-    // const change_select = () =>{
-    //     console.log(selectedInfo.value.equipment)
-    //     // console.log(selectedInfo.value.equipment[0])
-    // }
-
-    // const validateTime = (rule, value, callback) => {
-    //     if(!value){
-    //         callback(new Error('请选择时间'))
-    //     }
-    //     else{
-    //         console.log(value);
-    //         callback();
-    //     }
-    // }
-
-    // const validateEquipment = (rule, value, callback) => {
-    //     if(!value){
-    //         callback(new Error('请选择建筑/传感器编号'))
-    //     }
-    //     else{
-    //         callback();
-    //     }
-    // }
-
-    // // 表单规则
-    // const fileRules = ref({
-    //     time:[{
-    //         validator:validateTime,
-    //         trigger:'change',
-    //     }],
-    //     equipment:[{
-    //         validator:validateEquipment,
-    //         trigger:'change',
-    //     }]
-    // })
-
-    // const formRef = ref(null);
-
 
     // 跳转到仪表盘
     const GoToDash = () => {
@@ -214,81 +64,66 @@
 
     // 上传文件
     const uploadFile = () => {
-        // formRef.value.validate((valid) => {
-            // if(valid){   //表单验证成功
-                if (selectedFile.value) {
-                    let formData = new FormData();
-                    formData.append('csv', selectedFile.value);
-                    // formData.append('building', selectedInfo.value.equipment[0])
-                    // formData.append('equipment', selectedInfo.value.equipment[1])
-                    // formData.append('start_time', selectedInfo.value.time[0])
-                    // formData.append('end_time', selectedInfo.value.time[1])
+        if (selectedFile.value) {
+            let formData = new FormData();
+            formData.append('csv', selectedFile.value);
 
-                    // formData.append('min', range.value[0]); //最低阈值 
-                    // formData.append('max', range.value[1]); //最高阈值
+            UploadCsv(formData)
+                .then(function (result) {
+                    chartData.value = result.data;
+                    file_url.value = result.data.csv_url;
 
-                    UploadCsv(formData)
-                        .then(function (result) {
-                            chartData.value = result.data;
-                            file_url.value = result.data.csv_url;
+                    // 绘制echarts折线图
+                    var myChart = echarts.init(document.getElementById('main'));
+                    let option;
+                    let yData=chartData.value.yData;
+                    let series = [];
+                    for (let name in yData) {
+                    series.push({
+                        name: name,
+                        type: 'line',
+                        data: yData[name],
+                        smooth: false,
+                    })
+                    }
+                    option = {
+                        title: {
+                            text: '振动数据风震图'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: ['x', 'y', 'z']
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            boundaryGap: false,
+                            data: []
+                        },
+                        yAxis: {
+                            type: 'value'
+                        },
+                        series: series
+                    };
+                    myChart.setOption(option);
 
-                            // 绘制echarts折线图
-                            var myChart = echarts.init(document.getElementById('main'));
-                            let option;
-                            let yData=chartData.value.yData;
-                            let series = [];
-                            for (let name in yData) {
-                            series.push({
-                                name: name,
-                                type: 'line',
-                                data: yData[name],
-                                smooth: false,
-                            })
-                            }
-                            option = {
-                                title: {
-                                    text: '振动数据风震图'
-                                },
-                                tooltip: {
-                                    trigger: 'axis'
-                                },
-                                legend: {
-                                    data: ['x', 'y', 'z']
-                                },
-                                grid: {
-                                    left: '3%',
-                                    right: '4%',
-                                    bottom: '3%',
-                                    containLabel: true
-                                },
-                                xAxis: {
-                                    type: 'category',
-                                    boundaryGap: false,
-                                    data: []
-                                },
-                                yAxis: {
-                                    type: 'value'
-                                },
-                                series: series
-                            };
-                            myChart.setOption(option);
-
-                            showNormal.value = true;
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                }
-            //     else{
-            //         ElMessage.error('请选择csv文件')
-            //     }
-            // }
-            else{
-                ElMessage.error('请检查表单是否填写正确！')
-            }
-        // })
-
-    };
+                    showNormal.value = true;
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+        }
+        else{
+            ElMessage.error('请选择csv文件')
+        }
+    }
 
 
     // 异常值筛选
