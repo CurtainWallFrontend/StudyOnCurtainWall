@@ -1,7 +1,7 @@
-<!-- 玻璃内爆识别页面 -->
+<!-- 玻璃平整度分析页面 -->
 <template>
 
-    <div>这是玻璃自爆识别页面</div>
+    <div>这是玻璃平整度分析页面</div>
     <el-button @click="GoToDash">进入仪表盘</el-button>
     <!-- 上传图片begin -->
     <!-- action为文件上传地址，也可通过https-request自定义上传方式，上传到哪里有待解决 -->

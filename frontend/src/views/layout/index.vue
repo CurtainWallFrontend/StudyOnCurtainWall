@@ -9,6 +9,7 @@
     <div class = "func-zone">
         <dashboard v-if="choice == 'dashboard'"/>
         <segmentation v-if="choice == 'segmentation'"/>
+        <smoothness v-if="choice == 'smoothness'"/>
         <explosion_identify v-if="choice == 'explosion_identify'"/>
         <vibration v-if="choice == 'vibration'"/>
         <vibrationData v-if="choice == 'vibration_data'"/>
@@ -20,6 +21,7 @@
 import { ref, reactive, onMounted, onUpdated, computed} from 'vue'
 import SideBar from '@/components/SideBar.vue'
 import dashboard from '@/views/layout/dashboard/index.vue'
+import smoothness from '@/views/layout/smoothness/index.vue'
 import segmentation from '@/views/layout/segmentation/index.vue'
 import explosion_identify from '@/views/layout/explosion_identify/index.vue'
 import vibration from '@/views/layout/vibration/index.vue'
@@ -44,6 +46,9 @@ const updateLogic = () => {
     choice.value = 'dashboard'
   } else if (route.params.choice === 'segmentation') {
     choice.value = 'segmentation'
+  }
+  else if (route.params.choice === 'smoothness') {
+    choice.value = 'smoothness'
   }
   else if (route.params.choice === 'explosion_identify') {
     choice.value = 'explosion_identify'
