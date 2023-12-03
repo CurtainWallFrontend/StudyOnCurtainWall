@@ -21,18 +21,37 @@
     </div>
 
     <h2 v-if="showAbnormal" style="margin:30px">4.异常值筛选结果</h2>
+    <div v-if="showAbnormal">
+        <el-button type="danger" style="margin-bottom: 20px" @click="dialogVisible = true">发送报告</el-button>
+        <el-dialog
+            v-model="dialogVisible"
+            title="提示"
+            width="30%"
+            :before-close="handleClose"
+        >
+            <span>发送报告到邮箱1156504938@qq.com？</span>
+            <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="sendMail">
+                    确定
+                </el-button>
+            </span>
+            </template>
+        </el-dialog>
+    </div>
     <div id="abnormal" style="width: 100%;height:500px;"></div>
 </template>
 
 <script setup>
     import router from "@/router/index.js"
-    import { UploadCsv, FilterOutlier } from '@/api/vibration.js'
+    import { UploadCsv, FilterOutlier, SendMail } from '@/api/vibration.js'
     import { ref, reactive } from 'vue'
     import * as echarts from 'echarts';
     import { ElMessage } from "element-plus";
 
     var chartData = ref();
-    var abnormalChartData = ref();
+    const dialogVisible = ref(false);
 
     const range = ref([-0.5, 0.5])
 
@@ -213,6 +232,22 @@
         .catch(function (error) {
             console.log(error);
         });
+    }
+
+
+    //发送邮件
+    const sendMail = () =>{
+        dialogVisible.value = false;
+        let formData = new FormData();
+        formData.append('address', '1156504938@qq.com')
+        formData.append('data', '测试邮件-幕墙数据')
+        SendMail(formData)
+        .then(function(result){
+            console.log(result);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     }
     
 

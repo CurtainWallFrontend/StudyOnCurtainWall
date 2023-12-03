@@ -11,6 +11,10 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.conf import settings
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 import os
 import csv
 import numpy as np
@@ -253,6 +257,33 @@ class ConditionSearch(GenericViewSet):
                         'x': -0.001,
                         'y': 0.023,
                         'z': 0.3,
+                    },
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    },
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    },
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
                     }
                 ]
             },status=status.HTTP_200_OK)
@@ -261,6 +292,43 @@ class ConditionSearch(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 发送邮件到指定邮箱
+class SendMail(GenericViewSet):
+    serializer_class = ImageSerializer
+
+    @action(methods=['post'], detail=False)
+    def send_mail(self,request):
+        receiver_address = request.POST['address']
+        message = request.POST['data']
+        sender_address = 'curtainwall2023@163.com'
+        subject = 'Test'
+
+        # 创建邮件内容
+        msg = MIMEMultipart()
+        msg['From'] = sender_address
+        msg['To'] = receiver_address
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
+        try:
+            #连接SMTP服务器并发送邮件
+            smtp_server = 'smtp.163.com'
+            port = 25
+            username = 'curtainwall2023@163.com'
+            password = 'ZFTHMXDLEOEZDJTS'
+
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.login(username, password)
+                server.sendmail(sender_address, receiver_address, msg.as_string())
+
+            return Response(status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            # 处理异常情况
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 

@@ -69,3 +69,27 @@ export function ConditionSearch(FormData) {
         console.log(error);
     });
 }
+
+
+// 发送邮件
+export function SendMail(FormData) {  
+    return Request({  // 发送请求
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/form-data', // 设置请求头
+        },
+        url: '/backend/vibration/sendMail/', 
+        data: FormData, 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            Message.success("发送邮件成功！");
+            
+            console.log(response); 
+            return response;  
+        } else {
+            Message.error("发送邮件失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}
