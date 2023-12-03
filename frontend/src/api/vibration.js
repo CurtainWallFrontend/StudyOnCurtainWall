@@ -72,14 +72,11 @@ export function ConditionSearch(FormData) {
 
 
 // 发送邮件
-export function SendMail(FormData) {  
+export function SendMail(data) {  
     return Request({  // 发送请求
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/form-data', // 设置请求头
-        },
         url: '/backend/vibration/sendMail/', 
-        data: FormData, 
+        data: data, 
     }).then(function (response) {  
         if (response.status === 200) {
             Message.success("发送邮件成功！");

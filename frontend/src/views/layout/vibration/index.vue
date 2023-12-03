@@ -52,6 +52,7 @@
 
     var chartData = ref();
     const dialogVisible = ref(false);
+    let abnormalData;
 
     const range = ref([-0.5, 0.5])
 
@@ -160,13 +161,13 @@
             // 绘制echarts折线图
             var myChart = echarts.init(document.getElementById('abnormal'));
             let option;
-            let yData=result.data.yData;
+            abnormalData = result.data.yData;
             let series = [];
-            for (let name in yData) {
+            for (let name in abnormalData) {
                 series.push({
                     name: name,
                     type: 'line',
-                    data: yData[name],
+                    data: abnormalData[name],
                     smooth: false,
                     markLine: {
                                 data: [
@@ -220,8 +221,8 @@
                 },
                 yAxis: {
                     type: 'value',
-                    min: Math.min(range.value[0], Math.min(...yData['x']), Math.min(...yData['y']), Math.min(...yData['z']),),
-                    max: Math.max(range.value[1], Math.max(...yData['x']), Math.max(...yData['y']),Math.max(...yData['z'])),
+                    min: Math.min(range.value[0], Math.min(...abnormalData['x']), Math.min(...abnormalData['y']), Math.min(...abnormalData['z']),),
+                    max: Math.max(range.value[1], Math.max(...abnormalData['x']), Math.max(...abnormalData['y']),Math.max(...abnormalData['z'])),
                 },
                 series: series
             };
@@ -238,10 +239,14 @@
     //发送邮件
     const sendMail = () =>{
         dialogVisible.value = false;
-        let formData = new FormData();
-        formData.append('address', '1156504938@qq.com')
-        formData.append('data', '测试邮件-幕墙数据')
-        SendMail(formData)
+
+        SendMail({
+            address: '1156504938@qq.com',
+            data: abnormalData,
+            max: range.value[1],
+            min: range.value[0],
+            device: 'Device320EA412',
+        })
         .then(function(result){
             console.log(result);
         })

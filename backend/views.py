@@ -300,10 +300,20 @@ class SendMail(GenericViewSet):
 
     @action(methods=['post'], detail=False)
     def send_mail(self,request):
-        receiver_address = request.POST['address']
-        message = request.POST['data']
+        info = request.data;
         sender_address = 'curtainwall2023@163.com'
-        subject = 'Test'
+        receiver_address = info['address']
+        subject = '异常数据报告'
+
+        x_str = ';  '.join(str(x) for x in info['data']['x']) if info['data']['x'] else ''
+        y_str = ';  '.join(str(y) for y in info['data']['y']) if info['data']['y'] else ''
+        z_str = ';  '.join(str(z) for z in info['data']['z']) if info['data']['z'] else ''
+
+        message = f"异常范围：[{info['min']},{info['max']}]\n" \
+                 f"传感器编号：{info['device']} \n" \
+                 f" x方向:\n {x_str} \n\n" \
+                 f" y方向:\n {y_str} \n\n" \
+                 f" z方向:\n {z_str} "
 
         # 创建邮件内容
         msg = MIMEMultipart()
@@ -312,7 +322,7 @@ class SendMail(GenericViewSet):
         msg['Subject'] = subject
         msg.attach(MIMEText(message, 'plain'))
         try:
-            #连接SMTP服务器并发送邮件
+            # #连接SMTP服务器并发送邮件
             smtp_server = 'smtp.163.com'
             port = 25
             username = 'curtainwall2023@163.com'
@@ -328,8 +338,6 @@ class SendMail(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 # def segment_image(input_image_data, output_dir='/root/StudyOnCurtainWall/backend/media/segged', sam_checkpoint="backend\sam_vit_h_4b8939.pth", model_type="vit_h"):
