@@ -105,6 +105,7 @@ class GetImg(GenericViewSet):
             except Exception as e:
                 return Response({'error': str(e),'message': 'Image uploading fail.'}, status=status.HTTP_400_BAD_REQUEST)
 
+# 上传CSV振动数据文件
 class UploadCsv(GenericViewSet):
     serializer_class = ImageSerializer
 
@@ -169,6 +170,7 @@ class UploadCsv(GenericViewSet):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 异常值筛选
 class FilterOutlier(GenericViewSet):
     serializer_class = ImageSerializer
 
@@ -213,6 +215,53 @@ class FilterOutlier(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+def data_smoothing(data, num_parts):
+    n = len(data)
+    chunk_size = n // num_parts  # 每份大小
+    result = []
+    for i in range(0, n, chunk_size):
+        chunk = data[i:i + chunk_size]
+        average = sum(chunk) / len(chunk)
+        result.append(average)
+    return result
+
+# 条件搜索：数据库数据
+class ConditionSearch(GenericViewSet):
+    serializer_class = ImageSerializer
+
+    @action(methods=['post'], detail=False)
+    def condition_search(self,request):
+        try:
+            building = request.POST['building']
+            equipment = request.POST['equipment']
+            start_time = request.POST['start_time']
+            end_time = request.POST['end_time']
+            pageNo = request.POST['pageNo']
+            pageSize = request.POST['pageSize']
+
+            #数据库查找
+
+            return Response({
+                'total': 34,
+                'records':[
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    }
+                ]
+            },status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            # 处理异常情况
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # def segment_image(input_image_data, output_dir='/root/StudyOnCurtainWall/backend/media/segged', sam_checkpoint="backend\sam_vit_h_4b8939.pth", model_type="vit_h"):
@@ -261,12 +310,3 @@ class FilterOutlier(GenericViewSet):
 
 # 数据平滑处理
 
-def data_smoothing(data, num_parts):
-    n = len(data)
-    chunk_size = n // num_parts  # 每份大小
-    result = []
-    for i in range(0, n, chunk_size):
-        chunk = data[i:i + chunk_size]
-        average = sum(chunk) / len(chunk)
-        result.append(average)
-    return result
