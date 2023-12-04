@@ -21,18 +21,38 @@
     </div>
 
     <h2 v-if="showAbnormal" style="margin:30px">4.异常值筛选结果</h2>
+    <div v-if="showAbnormal">
+        <el-button type="danger" style="margin-bottom: 20px" @click="dialogVisible = true">发送报告</el-button>
+        <el-dialog
+            v-model="dialogVisible"
+            title="提示"
+            width="30%"
+            :before-close="handleClose"
+        >
+            <span>发送报告到邮箱1156504938@qq.com？</span>
+            <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="sendMail">
+                    确定
+                </el-button>
+            </span>
+            </template>
+        </el-dialog>
+    </div>
     <div id="abnormal" style="width: 100%;height:500px;"></div>
 </template>
 
 <script setup>
     import router from "@/router/index.js"
-    import { UploadCsv, FilterOutlier } from '@/api/vibration.js'
+    import { UploadCsv, FilterOutlier, SendMail } from '@/api/vibration.js'
     import { ref, reactive } from 'vue'
     import * as echarts from 'echarts';
     import { ElMessage } from "element-plus";
 
     var chartData = ref();
-    var abnormalChartData = ref();
+    const dialogVisible = ref(false);
+    let abnormalData;
 
     const range = ref([-0.5, 0.5])
 
@@ -141,13 +161,13 @@
             // 绘制echarts折线图
             var myChart = echarts.init(document.getElementById('abnormal'));
             let option;
-            let yData=result.data.yData;
+            abnormalData = result.data.yData;
             let series = [];
-            for (let name in yData) {
+            for (let name in abnormalData) {
                 series.push({
                     name: name,
                     type: 'line',
-                    data: yData[name],
+                    data: abnormalData[name],
                     smooth: false,
                     markLine: {
                                 data: [
@@ -201,8 +221,8 @@
                 },
                 yAxis: {
                     type: 'value',
-                    min: Math.min(range.value[0], Math.min(...yData['x']), Math.min(...yData['y']), Math.min(...yData['z']),),
-                    max: Math.max(range.value[1], Math.max(...yData['x']), Math.max(...yData['y']),Math.max(...yData['z'])),
+                    min: Math.min(range.value[0], Math.min(...abnormalData['x']), Math.min(...abnormalData['y']), Math.min(...abnormalData['z']),),
+                    max: Math.max(range.value[1], Math.max(...abnormalData['x']), Math.max(...abnormalData['y']),Math.max(...abnormalData['z'])),
                 },
                 series: series
             };
@@ -213,6 +233,26 @@
         .catch(function (error) {
             console.log(error);
         });
+    }
+
+
+    //发送邮件
+    const sendMail = () =>{
+        dialogVisible.value = false;
+
+        SendMail({
+            address: '1156504938@qq.com',
+            data: abnormalData,
+            max: range.value[1],
+            min: range.value[0],
+            device: 'Device320EA412',
+        })
+        .then(function(result){
+            console.log(result);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     }
     
 

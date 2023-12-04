@@ -47,3 +47,46 @@ export function FilterOutlier(FormData) {
     });
 }
 
+// 条件搜索数据库
+export function ConditionSearch(FormData) {  
+    return Request({  // 发送请求
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/form-data', // 设置请求头
+        },
+        url: '/backend/vibration/conditionSearch/', 
+        data: FormData, 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            Message.success("搜索成功！");
+            
+            console.log(response); 
+            return response;  
+        } else {
+            Message.error("搜索失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}
+
+
+// 发送邮件
+export function SendMail(data) {  
+    return Request({  // 发送请求
+        method: 'POST',
+        url: '/backend/vibration/sendMail/', 
+        data: data, 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            Message.success("发送邮件成功！");
+            
+            console.log(response); 
+            return response;  
+        } else {
+            Message.error("发送邮件失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}

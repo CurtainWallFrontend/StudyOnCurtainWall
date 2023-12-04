@@ -9,3 +9,4 @@ class Image(models.Model):
         app_label = 'backend'
     def __str__(self):
         return self.name
+    

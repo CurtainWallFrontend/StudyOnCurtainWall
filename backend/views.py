@@ -11,6 +11,10 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.conf import settings
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 import os
 import csv
 import numpy as np
@@ -27,7 +31,7 @@ class GetImg(GenericViewSet):
 
     @action(methods=['post'], detail=False)
     def save_image(self, request):
-        file_path = './backend/media/' # 指定保存文件的文件夹路径
+        file_path = './media/' # 指定保存文件的文件夹路径
         # 若文件夹不存在则新建
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -35,38 +39,64 @@ class GetImg(GenericViewSet):
         if request.POST.get('func')  == 'A':
 
             file_path = os.path.join(file_path,'segmentaion')
+            fs = FileSystemStorage(location=file_path)
             try:
                 uploaded_file = request.FILES['image']  # 获取上传的图像文件
                 FileSystemStorage(location=file_path)
+                filename = fs.save(uploaded_file.name, uploaded_file)
+
+                #返回图片先写死为原图片
+                result_url = request.build_absolute_uri('/media/segmentation/' + filename)
+                print(result_url)
+                return Response({'message': 'Image Saving complete.',
+                                 'total': 13,  #结果图片数量
+                                 'pictures': [   #结果图片url
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url}, 
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                 ]}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'error': str(e),'message': 'Image uploading fail.'}, status=status.HTTP_400_BAD_REQUEST)
 
                 # 开始图像分割的操作————————————————————————————
                 # 以下代码由严文昊小组填充修改———————————————————
+                # 取消代码逻辑，后续用连接代替
 
-                # 读取上传的图像文件并转换为numpy数组
-                image_data = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
+            #     # 读取上传的图像文件并转换为numpy数组
+            #     image_data = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
 
-                # 调用图像分割函数进行处理
-                #segment_image(image_data)
+            #     # 调用图像分割函数进行处理
+            #     #segment_image(image_data)
 
-                image_list = []  # 用于存储图片路径的列表
-                valid_extensions = ['.png', '.jpg', '.jpeg', '.gif']  # 允许的图片文件扩展名列表
+            #     image_list = []  # 用于存储图片路径的列表
+            #     valid_extensions = ['.png', '.jpg', '.jpeg', '.gif']  # 允许的图片文件扩展名列表
     
-                # 遍历文件夹中的所有文件和子文件夹
-                for root, dirs, files in os.walk('./backend/media/segged'):
-                    for file in files:
-                        file_extension = os.path.splitext(file)[1].lower()  # 获取文件扩展名并转换为小写
-                        if file_extension in valid_extensions:
-                            image_path = request.build_absolute_uri('/media/segged/' + file)
-                            image_list.append(image_path)
+            #     # 遍历文件夹中的所有文件和子文件夹
+            #     for root, dirs, files in os.walk('./backend/media/segged'):
+            #         for file in files:
+            #             file_extension = os.path.splitext(file)[1].lower()  # 获取文件扩展名并转换为小写
+            #             if file_extension in valid_extensions:
+            #                 image_path = request.build_absolute_uri('/media/segged/' + file)
+            #                 image_list.append(image_path)
      
-                return Response({'message': 'Image processing complete.',
-                                 'total': len(image_list),  #结果图片数量
-                                 'pictures':image_list},
-                                 status=status.HTTP_200_OK)
-            except Exception as e:
-                print(e)
-                # 处理异常情况
-                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            #     return Response({'message': 'Image processing complete.',
+            #                      'total': len(image_list),  #结果图片数量
+            #                      'pictures':image_list},
+            #                      status=status.HTTP_200_OK)
+            # except Exception as e:
+            #     print(e)
+            #     # 处理异常情况
+            #     return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         elif request.POST.get('func')  == 'B':
             file_path = os.path.join(file_path,'explosion_identify')
@@ -105,6 +135,7 @@ class GetImg(GenericViewSet):
             except Exception as e:
                 return Response({'error': str(e),'message': 'Image uploading fail.'}, status=status.HTTP_400_BAD_REQUEST)
 
+# 上传CSV振动数据文件
 class UploadCsv(GenericViewSet):
     serializer_class = ImageSerializer
 
@@ -169,6 +200,7 @@ class UploadCsv(GenericViewSet):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+# 异常值筛选
 class FilterOutlier(GenericViewSet):
     serializer_class = ImageSerializer
 
@@ -208,6 +240,125 @@ class FilterOutlier(GenericViewSet):
                     'z':z_abnormal,
                 },
             },status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            # 处理异常情况
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+def data_smoothing(data, num_parts):
+    n = len(data)
+    chunk_size = n // num_parts  # 每份大小
+    result = []
+    for i in range(0, n, chunk_size):
+        chunk = data[i:i + chunk_size]
+        average = sum(chunk) / len(chunk)
+        result.append(average)
+    return result
+
+# 条件搜索：数据库数据
+class ConditionSearch(GenericViewSet):
+    serializer_class = ImageSerializer
+
+    @action(methods=['post'], detail=False)
+    def condition_search(self,request):
+        try:
+            building = request.POST['building']
+            equipment = request.POST['equipment']
+            start_time = request.POST['start_time']
+            end_time = request.POST['end_time']
+            pageNo = request.POST['pageNo']
+            pageSize = request.POST['pageSize']
+
+            #数据库查找
+
+            return Response({
+                'total': 34,
+                'records':[
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    },
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    },
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    },
+                    {
+                        'date': '2023-1-23-12:12',
+                        'id': '1',
+                        'building': 'A楼',
+                        'equipment': 'Device230EF3',
+                        'x': -0.001,
+                        'y': 0.023,
+                        'z': 0.3,
+                    }
+                ]
+            },status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            # 处理异常情况
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+# 发送邮件到指定邮箱
+class SendMail(GenericViewSet):
+    serializer_class = ImageSerializer
+
+    @action(methods=['post'], detail=False)
+    def send_mail(self,request):
+        info = request.data;
+        sender_address = 'curtainwall2023@163.com'
+        receiver_address = info['address']
+        subject = '异常数据报告'
+
+        x_str = ';  '.join(str(x) for x in info['data']['x']) if info['data']['x'] else ''
+        y_str = ';  '.join(str(y) for y in info['data']['y']) if info['data']['y'] else ''
+        z_str = ';  '.join(str(z) for z in info['data']['z']) if info['data']['z'] else ''
+
+        message = f"异常范围：[{info['min']},{info['max']}]\n" \
+                 f"传感器编号：{info['device']} \n" \
+                 f" x方向:\n {x_str} \n\n" \
+                 f" y方向:\n {y_str} \n\n" \
+                 f" z方向:\n {z_str} "
+
+        # 创建邮件内容
+        msg = MIMEMultipart()
+        msg['From'] = sender_address
+        msg['To'] = receiver_address
+        msg['Subject'] = subject
+        msg.attach(MIMEText(message, 'plain'))
+        try:
+            # #连接SMTP服务器并发送邮件
+            smtp_server = 'smtp.163.com'
+            port = 25
+            username = 'curtainwall2023@163.com'
+            password = 'ZFTHMXDLEOEZDJTS'
+
+            with smtplib.SMTP(smtp_server, port) as server:
+                server.login(username, password)
+                server.sendmail(sender_address, receiver_address, msg.as_string())
+
+            return Response(status=status.HTTP_200_OK)
 
         except Exception as e:
             print(e)
@@ -261,12 +412,3 @@ class FilterOutlier(GenericViewSet):
 
 # 数据平滑处理
 
-def data_smoothing(data, num_parts):
-    n = len(data)
-    chunk_size = n // num_parts  # 每份大小
-    result = []
-    for i in range(0, n, chunk_size):
-        chunk = data[i:i + chunk_size]
-        average = sum(chunk) / len(chunk)
-        result.append(average)
-    return result

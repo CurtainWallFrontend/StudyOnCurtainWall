@@ -19,7 +19,7 @@ import router from "@/router/index.js"
 import Message from "@/utils/Message.js"
 import ImgUploader from '@/components/ImgUploader.vue'
 import ImgList from '@/components/ImgList.vue'
-import { UploadImg } from '@/api/segmentation.js'
+import { UploadImg } from '@/api/public.js'
 
 // const fileList = ref();
 const ImgUploadRef = ref(null); //上传的图片
@@ -43,15 +43,15 @@ const upload = (val) =>{
     formData.append('image', val.fileList[0].raw);
     formData.append('func', 'A');
 
-    UploadImg(formData)
-        .then(function (result) {  // result 是 api /user/login 的返回值，在后端 api 定义
-            // 接收返回值，放在 person_info 变量中
-            if(result.status == 200)
-                after_upload(result);
-        })
-        .catch(function (error) {
-            console.log(error);
-        });
+     UploadImg(formData)
+         .then(function (result) {  // result 是 api /user/login 的返回值，在后端 api 定义
+             // 接收返回值，放在 person_info 变量中
+                if(result.status == 200)
+                    after_upload(result);
+         })
+         .catch(function (error) {
+             console.log(error);
+         });
 }
 
 const after_upload = (result) => {

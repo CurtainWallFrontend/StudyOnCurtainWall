@@ -25,7 +25,7 @@ SECRET_KEY = 'z(du2spa%9b_ha(2q5+w=clr^whm@ynrq*b$0hh7663_jq+o2k'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -46,6 +46,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # 注意顺序,必须在CommonMiddleware之前
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -58,7 +59,7 @@ ROOT_URLCONF = 'StudyOnCurtainWall.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -81,6 +83,14 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'frontDataBase':{
+         'ENGINE': 'django.db.backends.mysql', #Mysql引擎
+         'NAME': 'mydb', # 数据库名，不需要路径以及后缀的   
+         'USER': 'root', #用户
+         'PASSWORD': 'TJtj123123', #密码
+         'HOST': '1.117.76.28',  #看清楚是公网ip
+         'PORT': '3306', # Set to empty string for default.
     }
 }
 
@@ -156,8 +166,5 @@ CORS_ALLOW_HEADERS = (
     'Pragma',
 )
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
-
-MEDIA_ROOT = (
-    os.path.join(BASE_DIR, 'backend/media')
-)

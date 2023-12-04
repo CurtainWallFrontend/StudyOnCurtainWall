@@ -1,7 +1,7 @@
 <!-- 玻璃内爆识别页面 -->
 <template>
 
-    <div>这是玻璃内爆识别页面</div>
+    <div>这是玻璃自爆识别页面</div>
     <el-button @click="GoToDash">进入仪表盘</el-button>
     <!-- 上传图片begin -->
     <!-- action为文件上传地址，也可通过https-request自定义上传方式，上传到哪里有待解决 -->
@@ -38,7 +38,7 @@ import axios from 'axios'
 import router from "@/router/index.js"
 import Message from "@/utils/Message.js"
 import ImgUploader from '@/components/ImgUploader.vue'
-import { UploadImg } from '@/api/segmentation.js'
+import { UploadImg } from '@/api/public.js'
 
 // const fileList = ref();
 const ImgUploadRef = ref(null); //上传的图片
