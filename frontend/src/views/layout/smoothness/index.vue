@@ -38,7 +38,7 @@ import axios from 'axios'
 import router from "@/router/index.js"
 import Message from "@/utils/Message.js"
 import ImgUploader from '@/components/ImgUploader.vue'
-import { UploadImg } from '@/api/segmentation.js'
+import { UploadImg } from '@/api/public.js'
 
 // const fileList = ref();
 const ImgUploadRef = ref(null); //上传的图片

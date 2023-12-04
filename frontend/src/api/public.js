@@ -3,7 +3,7 @@ import Message from "@/utils/Message.js"  // 在每个 api 文件里都要引入
 import router from "@/router/index.js"
 
 // 图像上传
-export function UploadImg(FormData) {  // 在 src/views/login/index.vue 里调用，可以去看看是如何调用的
+export function UploadImg(FormData) {  
     return Request({  // 发送请求
         method: 'POST',
         headers: {

@@ -31,7 +31,7 @@ class GetImg(GenericViewSet):
 
     @action(methods=['post'], detail=False)
     def save_image(self, request):
-        file_path = './backend/media/' # 指定保存文件的文件夹路径
+        file_path = './media/' # 指定保存文件的文件夹路径
         # 若文件夹不存在则新建
         if not os.path.exists(file_path):
             os.makedirs(file_path)
@@ -39,38 +39,64 @@ class GetImg(GenericViewSet):
         if request.POST.get('func')  == 'A':
 
             file_path = os.path.join(file_path,'segmentaion')
+            fs = FileSystemStorage(location=file_path)
             try:
                 uploaded_file = request.FILES['image']  # 获取上传的图像文件
                 FileSystemStorage(location=file_path)
+                filename = fs.save(uploaded_file.name, uploaded_file)
+
+                #返回图片先写死为原图片
+                result_url = request.build_absolute_uri('/media/segmentation/' + filename)
+                print(result_url)
+                return Response({'message': 'Image Saving complete.',
+                                 'total': 13,  #结果图片数量
+                                 'pictures': [   #结果图片url
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url}, 
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                     {'url': result_url},
+                                 ]}, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({'error': str(e),'message': 'Image uploading fail.'}, status=status.HTTP_400_BAD_REQUEST)
 
                 # 开始图像分割的操作————————————————————————————
                 # 以下代码由严文昊小组填充修改———————————————————
+                # 取消代码逻辑，后续用连接代替
 
-                # 读取上传的图像文件并转换为numpy数组
-                image_data = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
+            #     # 读取上传的图像文件并转换为numpy数组
+            #     image_data = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
 
-                # 调用图像分割函数进行处理
-                #segment_image(image_data)
+            #     # 调用图像分割函数进行处理
+            #     #segment_image(image_data)
 
-                image_list = []  # 用于存储图片路径的列表
-                valid_extensions = ['.png', '.jpg', '.jpeg', '.gif']  # 允许的图片文件扩展名列表
+            #     image_list = []  # 用于存储图片路径的列表
+            #     valid_extensions = ['.png', '.jpg', '.jpeg', '.gif']  # 允许的图片文件扩展名列表
     
-                # 遍历文件夹中的所有文件和子文件夹
-                for root, dirs, files in os.walk('./backend/media/segged'):
-                    for file in files:
-                        file_extension = os.path.splitext(file)[1].lower()  # 获取文件扩展名并转换为小写
-                        if file_extension in valid_extensions:
-                            image_path = request.build_absolute_uri('/media/segged/' + file)
-                            image_list.append(image_path)
+            #     # 遍历文件夹中的所有文件和子文件夹
+            #     for root, dirs, files in os.walk('./backend/media/segged'):
+            #         for file in files:
+            #             file_extension = os.path.splitext(file)[1].lower()  # 获取文件扩展名并转换为小写
+            #             if file_extension in valid_extensions:
+            #                 image_path = request.build_absolute_uri('/media/segged/' + file)
+            #                 image_list.append(image_path)
      
-                return Response({'message': 'Image processing complete.',
-                                 'total': len(image_list),  #结果图片数量
-                                 'pictures':image_list},
-                                 status=status.HTTP_200_OK)
-            except Exception as e:
-                print(e)
-                # 处理异常情况
-                return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            #     return Response({'message': 'Image processing complete.',
+            #                      'total': len(image_list),  #结果图片数量
+            #                      'pictures':image_list},
+            #                      status=status.HTTP_200_OK)
+            # except Exception as e:
+            #     print(e)
+            #     # 处理异常情况
+            #     return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         elif request.POST.get('func')  == 'B':
             file_path = os.path.join(file_path,'explosion_identify')
