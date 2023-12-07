@@ -44,7 +44,7 @@ const upload = (val) =>{
     formData.append('func', 'A');
 
      UploadImg(formData)
-         .then(function (result) {  // result 是 api /user/login 的返回值，在后端 api 定义
+         .then(function (result) {  // result 是 api  的返回值，在后端 api 定义
              // 接收返回值，放在 person_info 变量中
                 if(result.status == 200)
                     after_upload(result);
