@@ -10,9 +10,10 @@
                 <el-menu-item index="dashboard">仪表盘</el-menu-item>
                 <el-menu-item index="segmentation">图像分割处理</el-menu-item>
                 <el-menu-item index="smoothness">玻璃平整度分析</el-menu-item>
+                <el-menu-item index="crack">裂缝和污渍识别</el-menu-item>
                 <el-menu-item index="explosion_identify">玻璃自爆识别</el-menu-item>
                 <el-menu-item index="vibration">风振数据显示</el-menu-item>
-                <el-menu-item index="3Dmodel">3D模型</el-menu-item>
+                <el-menu-item index="model">3D模型</el-menu-item>
             </el-sub-menu>
             <el-sub-menu index="database">
                 <template #title>

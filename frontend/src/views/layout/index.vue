@@ -10,10 +10,11 @@
         <dashboard v-if="choice == 'dashboard'"/>
         <segmentation v-if="choice == 'segmentation'"/>
         <smoothness v-if="choice == 'smoothness'"/>
+        <crack v-if="choice == 'crack'"/>
         <explosion_identify v-if="choice == 'explosion_identify'"/>
         <vibration v-if="choice == 'vibration'"/>
         <vibrationData v-if="choice == 'vibration_data'"/>
-        <model v-if="choice == '3Dmodel'"/>
+        <model v-if="choice == 'model'"/>
     </div>
 </template>
 
@@ -22,6 +23,7 @@ import { ref, reactive, onMounted, onUpdated, computed} from 'vue'
 import SideBar from '@/components/SideBar.vue'
 import dashboard from '@/views/layout/dashboard/index.vue'
 import smoothness from '@/views/layout/smoothness/index.vue'
+import crack from '@/views/layout/crack/index.vue'
 import segmentation from '@/views/layout/segmentation/index.vue'
 import explosion_identify from '@/views/layout/explosion_identify/index.vue'
 import vibration from '@/views/layout/vibration/index.vue'
@@ -42,27 +44,33 @@ onUpdated(() => {
 
 // 执行不同逻辑的函数
 const updateLogic = () => {
-  if (route.params.choice === 'dashboard') {
-    choice.value = 'dashboard'
-  } else if (route.params.choice === 'segmentation') {
-    choice.value = 'segmentation'
+    switch (route.params.choice){
+        case 'dashboard':
+            choice.value = 'dashboard'
+            break;
+        case 'segmentation':
+            choice.value = 'segmentation'
+            break;
+        case 'smoothness':
+            choice.value = 'smoothness'
+            break;
+        case 'crack':
+            choice.value = 'crack'
+            break;
+        case 'explosion_identify':
+            choice.value = 'explosion_identify'
+            break;
+        case 'vibration':
+            choice.value = 'vibration'
+            break;
+        case 'vibration_data':
+            choice.value = 'vibration_data'
+            break;
+        case 'model':
+            choice.value = 'model'
+            break;
   }
-  else if (route.params.choice === 'smoothness') {
-    choice.value = 'smoothness'
-  }
-  else if (route.params.choice === 'explosion_identify') {
-    choice.value = 'explosion_identify'
-  }
-  else if (route.params.choice === 'vibration') {
-    choice.value = 'vibration'
-  }
-  else if (route.params.choice === 'vibration_data'){
-    choice.value = 'vibration_data'
-  }
-  else if (route.params.choice === '3Dmodel'){
-    choice.value = '3Dmodel'
-  }
-};
+}
 </script>
 
 <style scoped>
