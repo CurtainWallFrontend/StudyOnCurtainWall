@@ -2,7 +2,7 @@
 <template>
     <el-aside width=100%>
         <h2>LOGO</h2>
-        <el-menu :default-active="defaultActive" router class = "menu">
+        <el-menu :default-active="defaultActive" router class = "menu" @select="handleSelect">
             <el-sub-menu index="dashboard">
                 <template #title>
                     <span style="color:rgb(204, 204, 204);">功能</span>
@@ -13,7 +13,7 @@
                 <el-menu-item index="crack">裂缝和污渍识别</el-menu-item>
                 <el-menu-item index="explosion_identify">玻璃自爆识别</el-menu-item>
                 <el-menu-item index="vibration">风振数据显示</el-menu-item>
-                <el-menu-item index="model">3D模型</el-menu-item>
+                <a href = "http://120.46.136.85:8888/"><el-menu-item>3D模型</el-menu-item></a>
             </el-sub-menu>
             <el-sub-menu index="database">
                 <template #title>
@@ -32,13 +32,19 @@
 
 <script setup>
 import router from "@/router/index.js"
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from "vue-router";
 
-const showManagement = ref(true)
-const handleSelectMenu = (choice) => {
-    router.push({ name: 'layout', params:{ choice:choice } })
-}
 const defaultActive = ref('dashboard')
+
+const handleSelect = (index) => {
+  localStorage.setItem('lastActiveMenuItem', index);
+};
+
+onMounted(() => {
+  defaultActive.value = localStorage.getItem('lastActiveMenuItem') ?? '';
+});
+
 
 </script>
 
