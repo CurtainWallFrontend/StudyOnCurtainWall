@@ -1,5 +1,4 @@
 <template>
-    <div>这是振动数据风震图页面</div>
     <el-button @click="GoToDash">进入仪表盘</el-button>
 
     <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
