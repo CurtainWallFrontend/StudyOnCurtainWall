@@ -22,10 +22,6 @@ import numpy as np
 import torch
 import cv2
 import sys
-# 模块路径添加到 sys.path
-#sys.path.append('/root/StudyOnCurtainWall/backend')
-from backend.segment_anything import sam_model_registry, SamAutomaticMaskGenerator
-
 
 class Test(GenericViewSet):
     serializer_class = ImageSerializer
@@ -71,9 +67,6 @@ class Test(GenericViewSet):
             'message':'device deleted successfully'
         },status=status.HTTP_200_OK)
 
-
-
-
 class GetImg(GenericViewSet):
     serializer_class = ImageSerializer
 
@@ -118,33 +111,7 @@ class GetImg(GenericViewSet):
 
                 # 开始图像分割的操作————————————————————————————
                 # 以下代码由严文昊小组填充修改———————————————————
-                # 取消代码逻辑，后续用连接代替
-
-            #     # 读取上传的图像文件并转换为numpy数组
-            #     image_data = cv2.imdecode(np.fromstring(uploaded_file.read(), np.uint8), cv2.IMREAD_COLOR)
-
-            #     # 调用图像分割函数进行处理
-            #     #segment_image(image_data)
-
-            #     image_list = []  # 用于存储图片路径的列表
-            #     valid_extensions = ['.png', '.jpg', '.jpeg', '.gif']  # 允许的图片文件扩展名列表
-    
-            #     # 遍历文件夹中的所有文件和子文件夹
-            #     for root, dirs, files in os.walk('./backend/media/segged'):
-            #         for file in files:
-            #             file_extension = os.path.splitext(file)[1].lower()  # 获取文件扩展名并转换为小写
-            #             if file_extension in valid_extensions:
-            #                 image_path = request.build_absolute_uri('/media/segged/' + file)
-            #                 image_list.append(image_path)
-     
-            #     return Response({'message': 'Image processing complete.',
-            #                      'total': len(image_list),  #结果图片数量
-            #                      'pictures':image_list},
-            #                      status=status.HTTP_200_OK)
-            # except Exception as e:
-            #     print(e)
-            #     # 处理异常情况
-            #     return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+                # 取消代码逻辑，后续用链接代替
 
         elif request.POST.get('func')  == 'B':
             file_path = os.path.join(file_path,'explosion_identify')
@@ -159,7 +126,6 @@ class GetImg(GenericViewSet):
 
                  # 开始识别玻璃内爆的操作—————————————————————————
                  # 以下代码由邓丁熙小组填充修改———————————————————
-
 
                 #返回图片先写死为原图片
                 result_url = request.build_absolute_uri('/media/explosion_identify/' + filename)
