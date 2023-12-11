@@ -1,8 +1,6 @@
 <!-- 玻璃内爆识别页面 -->
 <template>
-
-    <div>这是玻璃自爆识别页面</div>
-    <el-button @click="GoToDash">进入仪表盘</el-button>
+    <!-- <el-button @click="GoToDash">进入仪表盘</el-button> -->
     <!-- 上传图片begin -->
     <!-- action为文件上传地址，也可通过https-request自定义上传方式，上传到哪里有待解决 -->
     <!-- <el-upload
@@ -44,15 +42,15 @@ import { UploadImg } from '@/api/public.js'
 const ImgUploadRef = ref(null); //上传的图片
 const ImgResult = ref(null); //分割后获得的图片
 
-const GoToDash = () => {
-    //跳转仪表盘页面
-    router.push({ 
-        name: 'layout', 
-        params:{ 
-            choice:'dashboard' 
-        } 
-    })
-}
+// const GoToDash = () => {
+//     //跳转仪表盘页面
+//     router.push({ 
+//         name: 'layout', 
+//         params:{ 
+//             choice:'dashboard' 
+//         } 
+//     })
+// }
 
 const upload = (val) =>{
     console.log(val.fileList[0].raw) //图片raw文件

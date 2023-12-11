@@ -1,6 +1,5 @@
 <template>
-    <div>这是振动数据风震图页面</div>
-    <el-button @click="GoToDash">进入仪表盘</el-button>
+    <!-- <el-button @click="GoToDash">进入仪表盘</el-button> -->
 
     <div>
         <h2>1.请上传振动数据文件（csv）</h2>
@@ -63,16 +62,16 @@
     const showAbnormal = ref(false); //显示异常风震图
 
 
-    // 跳转到仪表盘
-    const GoToDash = () => {
-        //跳转仪表盘页面
-        router.push({ 
-            name: 'layout', 
-            params:{ 
-                choice:'dashboard' 
-            } 
-        })
-    }
+    // // 跳转到仪表盘
+    // const GoToDash = () => {
+    //     //跳转仪表盘页面
+    //     router.push({ 
+    //         name: 'layout', 
+    //         params:{ 
+    //             choice:'dashboard' 
+    //         } 
+    //     })
+    // }
 
 
     // 选择文件
