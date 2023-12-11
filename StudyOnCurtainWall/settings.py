@@ -80,17 +80,20 @@ WSGI_APPLICATION = 'StudyOnCurtainWall.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    },
-    'frontDataBase':{
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # },
+    'default':{
          'ENGINE': 'django.db.backends.mysql', #Mysql引擎
-         'NAME': 'mydb', # 数据库名，不需要路径以及后缀的   
+         'NAME': 'mydb', # 数据库名，不需要路径以及后缀的  
          'USER': 'root', #用户
          'PASSWORD': 'TJtj123123', #密码
          'HOST': '1.117.76.28',  #看清楚是公网ip
          'PORT': '3306', # Set to empty string for default.
+         'OPTIONS': {
+           'charset': 'utf8mb4',
+         },
     }
 }
 

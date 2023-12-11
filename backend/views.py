@@ -4,12 +4,13 @@ from rest_framework.response import Response
 from django.shortcuts import render
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.decorators import action
-from backend.models import Image
+from backend.models import *
 from rest_framework import status
 from backend.serializers import ImageSerializer
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.conf import settings
+from django.shortcuts import get_object_or_404
 
 import smtplib
 from email.mime.text import MIMEText
@@ -24,6 +25,53 @@ import sys
 # 模块路径添加到 sys.path
 #sys.path.append('/root/StudyOnCurtainWall/backend')
 from backend.segment_anything import sam_model_registry, SamAutomaticMaskGenerator
+
+
+class Test(GenericViewSet):
+    serializer_class = ImageSerializer
+    queryset = Device.objects.all()
+
+    @action(methods=['get'], detail=False)
+    def get_device(self, request):
+        devices = self.get_queryset()
+        result = []
+        for device in devices:
+            row = {
+                "building": device.building.building_name,
+                "id": device.device_id,
+                "name": device.device_name,
+            }
+            result.append(row)
+
+        return Response(result)
+
+    @action(methods=['get'], detail=False)
+    def add_device(self,request):
+
+        building = Building.objects.get(pk='1')
+        print(building)
+        # device_id会自动生成
+        device = Device(device_name='新设备',
+                        building=building)
+        device.save()
+
+        response = {
+            'message':'Device create successfully',
+            'device_id': device.device_id,
+            'device_name':device.device_name,
+            'building':device.building.building_name,
+        }
+        return Response(response,status=status.HTTP_200_OK)
+
+    @action(methods=['get'],detail=False)
+    def delete_device(self,request):
+        device = get_object_or_404(Device, pk='12')
+        device.delete()
+        return Response({
+            'message':'device deleted successfully'
+        },status=status.HTTP_200_OK)
+
+
 
 
 class GetImg(GenericViewSet):
