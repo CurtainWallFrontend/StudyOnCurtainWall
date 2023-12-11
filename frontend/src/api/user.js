@@ -1,69 +1,55 @@
 // 管理用户数据
-
 import { defineStore } from "pinia"
 import { ref } from "vue"
-
-// 登录功能
-import request from '@/utils/Request';
-
-export const loginAPI = ({ email, password }) => {
-    return request.post('/login', {
-        email,
-        password
-    });
-}
-
-// 注册功能
-export const registerAPI = (email) => {
-    return request.post('/register', {"email":email});
-}
-
-
-
-import { useRouter } from 'vue-router';
+import Request from "@/utils/Request.js";  // 在每个 api 文件里都要引入这两个文件
+import Message from "@/utils/Message.js"  // 在每个 api 文件里都要引入这两个文件
 
 export const useUserStore = defineStore('user', () => {
-    const router = useRouter();  // 获取 Vue Router 实例
     const userInfo = ref({});
 
-    // 获取用户信息并存储
     const login = async (email, password) => {
         try {
-            const response = await loginAPI({ email, password });
-            console.log(response)
-            if (response.status===200) {
-                // 如果登录成功，存储用户信息
+            const response = await Request.post('/login', { email, password });
+            if (response.status === 200) {
                 userInfo.value = response.data;
-
-                // 跳转到指定页面
-                router.push({
-                    name: 'layout',
-                    params: {
-                        choice: 'dashboard'
-                    }
-                });
+                return true;
             } else {
-                // 如果登录失败，处理错误信息
-                console.error(response.message);
-                // 这里你可以选择展示错误信息给用户，例如使用弹窗、Toast 等
+                console.error(response);
             }
         } catch (error) {
-            console.error(error);
-            // 处理其他错误，例如网络请求失败等
+            Message.error(error.message)
         }
     };
 
     const sendVerificationCode = async (email) => {
         try {
-            const response = await registerAPI( email );
-            console.log(response)
-            if (response.status===200) {
-                
+            const response = await Request.post('/register', { "email": email });
+            if (response.status === 200) {
+                Message.success(response.data.message);
+                return true;
             } else {
-                
+                console.error(response);
+                return false;
             }
         } catch (error) {
-            console.error(error);
+            Message.error(error.message);
+            return false;
+        }
+    };
+
+    const register = async (email,code,password) => {
+        try {
+            const response = await Request.post('/validate', { "email": email,"code":code,"password":password });
+            if (response.status === 200) {
+                Message.success(response.data.message);
+                return true;
+            } else {
+                console.error(response);
+                return false;
+            }
+        } catch (error) {
+            Message.error(error.message);
+            return false;
         }
     };
 
@@ -76,6 +62,7 @@ export const useUserStore = defineStore('user', () => {
         userInfo,
         sendVerificationCode,
         login,
+        register,
         clearUserInfo
     };
 }, {

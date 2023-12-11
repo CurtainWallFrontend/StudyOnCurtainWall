@@ -17,14 +17,34 @@ Request.interceptors.request.use(config => {
   Promise.reject(err)
 })
 
-Request.interceptors.response.use(res => {
-    // 我们一般在这里处理，请求成功后的错误状态码 例如状态码是500，404，403
+Request.interceptors.response.use(
+  (res) => {
+    // 在这里处理请求成功后的错误状态码，例如状态码是500，404，403
     // res 是所有相应的信息
-    console.log(res)
-   return Promise.resolve(res)
-}, err => {
+    console.log(res);
+    return Promise.resolve(res);
+  },
+  (err) => {
     // 服务器响应发生错误时的处理
-    Promise.reject(err)
-})
+    // 获取响应对象
+    const errorResponse = err.response;
+    console.log(errorResponse.data.message)
+    // 如果有响应对象，说明服务器有返回，但是状态码不是2xx
+    if (errorResponse) {
+      // 在这里处理响应错误信息
+      console.error('Error response:', errorResponse);
+      return Promise.reject(errorResponse.data);
+    } else {
+      // 如果没有响应对象，说明请求还没有到达服务器，可能是网络问题等
+      console.error('Request error:', err.message);
+      // 返回一个包含错误信息的对象给调用方
+      return Promise.reject({
+        error: true,
+        message: err.message,
+      });
+    }
+  }
+);
+
 
 export default Request;
