@@ -18,9 +18,13 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
+from backend.views import register, validate, user_login
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('backend/', include('backend.urls')),
+    path('register', register, name='register'),
+    path('validate', validate, name='validate'),
+    path('login', user_login, name='login'),
     re_path(r'media/(?P<path>.*)', serve,{'document_root': settings.MEDIA_ROOT}),
 ]
