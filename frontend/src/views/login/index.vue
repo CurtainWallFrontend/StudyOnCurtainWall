@@ -1,19 +1,38 @@
 <!-- 登录页面 -->
 <template>
-    <div>本页面为登录/注册页面</div>
+    <div class="page">
     <div class="login-register">
     <div v-if="!userStore.isAuthenticated">
       <!-- 登录表单 -->
       <div v-if="showLoginForm">
-        <h2>登录</h2>
         <form @submit.prevent="login">
-          <label for="email">邮箱:</label>
-          <input v-model="loginForm.email" type="text" required />
-          <label for="password">密码:</label>
-          <input v-model="loginForm.password" type="password" required />
-          <button type="submit" style="color: white;">登录</button>
+        <el-form class="form0">
+          <el-form-item>
+            <p style="font-weight:bold;">欢迎！请登录您的账户</p>
+          </el-form-item>
+        </el-form>
+        <el-form class="form1">
+          <el-form-item>
+          <input v-model="loginForm.email" type="text" placeholder="邮箱" style="height: 28px;width: 190px;" required />
+          </el-form-item>
+        </el-form>
+        <el-form class="form2">
+          <el-form-item>
+          <input v-model="loginForm.password" type="password" placeholder="密码" style="height: 28px;width: 190px;" required />
+          </el-form-item>
+        </el-form>
+        <el-form class="button">
+          <el-form-item>
+            <button type="submit" style="height: 37px;width: 198px;background-color: rgb(4, 4, 80);color: white;">登录</button>
+          </el-form-item>
+        </el-form>
         </form>
-        <p @click="toggleForm">没有账户？点击注册</p>
+        <el-form class="register">
+          <el-form-item>
+            <p @click="toggleForm" style="color: rgb(193, 193, 193);">没有账户？点击注册</p>
+          </el-form-item>
+        </el-form>
+        
       </div>
       <!-- 注册表单 -->
       <div v-else>
@@ -50,7 +69,7 @@
 
 
   <el-button @click="GoToLayout">点击跳转排版页面</el-button>
-
+</div>
 
 </template>
 
@@ -157,5 +176,54 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
+.page{
+  background-image: url('@/assets/background.png');
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+}
+.form0{
+  position: absolute;
+  color: white;
+    top: 39%;
+    left: 84%;
+    transform: translate(-50%, -50%);
+    height: 10%;
+    width: 20%;
+}
+.form1{
+  position: absolute;
+    top: 48%;
+    left: 84%;
+    transform: translate(-50%, -50%);
+    height: 10%;
+    width: 20%;
+}
+.form2{
+  position: absolute;
+    top: 56%;
+    left: 84%;
+    transform: translate(-50%, -50%);
+    height: 10%;
+    width: 20%;
+}
+.button{
+  position: absolute;
+    top: 64%;
+    left: 84%;
+    transform: translate(-50%, -50%);
+    height: 10%;
+    width: 20%;
+}
+.register{
+  position: absolute;
+    top: 67%;
+    left: 87%;
+    transform: translate(-50%, -50%);
+    height: 10%;
+    width: 20%;
+}
 </style>
