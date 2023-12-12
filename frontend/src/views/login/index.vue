@@ -6,38 +6,31 @@
       <!-- 登录表单 -->
       <div v-if="showLoginForm">
         <form @submit.prevent="login">
-        <el-form class="form0">
-          <el-form-item>
-            <p style="font-weight:bold;">欢迎！请登录您的账户</p>
-          </el-form-item>
-        </el-form>
-        <el-form class="form1">
-          <el-form-item>
-          <input v-model="loginForm.email" type="text" placeholder="邮箱" style="height: 28px;width: 190px;" required />
-          </el-form-item>
-        </el-form>
-        <el-form class="form2">
-          <el-form-item>
-          <input v-model="loginForm.password" type="password" placeholder="密码" style="height: 28px;width: 190px;" required />
-          </el-form-item>
-        </el-form>
-        <el-form class="button">
-          <el-form-item>
-            <button type="submit" style="height: 37px;width: 198px;background-color: rgb(4, 4, 80);color: white;">登录</button>
-          </el-form-item>
-        </el-form>
+          <el-form class="form">
+            <h2>欢迎！请登录您的账户</h2>
+            <el-form-item>
+              <el-input v-model="loginForm.email" type="text" placeholder="邮箱" required />
+            </el-form-item>
+
+            <el-form-item>
+              <el-input v-model="loginForm.password" type="password" placeholder="密码" required />
+            </el-form-item>
+            
+            <el-form-item>
+            <el-button type="submit">登录</el-button>
+            </el-form-item>
+          </el-form>
         </form>
         <el-form class="register">
           <el-form-item>
             <p @click="toggleForm" style="color: rgb(193, 193, 193);">没有账户？点击注册</p>
           </el-form-item>
         </el-form>
-        
       </div>
       <!-- 注册表单 -->
       <div v-else>
-        <h2>注册</h2>
-        <form @submit.prevent="register">
+        <form @submit.prevent="register" class="register-form">
+          <h2>注册</h2>
           <label for="email">邮箱:</label>
           <input v-model="registerForm.email" type="text" required />
           <div class="verification-code">
@@ -56,8 +49,9 @@
           <input v-model="registerForm.confirmPassword" type="password" required />
           </div>
           <button type="submit" style="color: white;">注册</button>
+          <p @click="toggleForm">已有账户？点击登录</p>
         </form>
-        <p @click="toggleForm">已有账户？点击登录</p>
+        
       </div>
     </div>
     <div v-else>
@@ -163,11 +157,6 @@ const toggleForm = () => {
 };
 
 
-
-
-
-
-
 onMounted(() => {
     userStore.clearUserInfo()
 });
@@ -185,45 +174,65 @@ onMounted(() => {
   height: 100vh;
   width: 100vw;
 }
-.form0{
+.form{
   position: absolute;
   color: white;
-    top: 39%;
-    left: 84%;
-    transform: translate(-50%, -50%);
-    height: 10%;
-    width: 20%;
+  top: 35%;
+  left: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.form1{
-  position: absolute;
-    top: 48%;
-    left: 84%;
-    transform: translate(-50%, -50%);
-    height: 10%;
-    width: 20%;
+
+.el-form-item + .el-form-item {
+  margin-top: 20px; /* 设置间距大小 */
 }
-.form2{
-  position: absolute;
-    top: 56%;
-    left: 84%;
-    transform: translate(-50%, -50%);
-    height: 10%;
-    width: 20%;
-}
+
 .button{
   position: absolute;
     top: 64%;
-    left: 84%;
+    left: 79%;
     transform: translate(-50%, -50%);
     height: 10%;
-    width: 20%;
+    width: 14%;
 }
 .register{
   position: absolute;
-    top: 67%;
-    left: 87%;
+    top: 68%;
+    left: 84.5%;
     transform: translate(-50%, -50%);
     height: 10%;
     width: 20%;
+    cursor: pointer;
+}
+
+.el-input {
+  height: 28px; 
+  width: 250px;
+}
+.input_box {
+    margin-right: 15px;
+}
+/*搜索input框 */
+:deep(.el-input__wrapper) {
+    background-color: white;/*覆盖原背景颜色，设置成透明 */
+    border-radius: 5px;
+    width:550px;
+    height:40px;
+    border-color:black;
+}
+
+.el-button{
+  height: 37px;
+  width: 198px;
+  background-color: rgb(4, 4, 80);
+  color: white;
+  border-color: transparent;
+}
+
+.register-form{
+  position:absolute;
+  top:39%;
+  left:80%;
 }
 </style>
