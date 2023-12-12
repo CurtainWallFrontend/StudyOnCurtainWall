@@ -49,13 +49,13 @@ export function FilterOutlier(FormData) {
 }
 
 // 条件搜索数据库
-export function ConditionSearch(FormData) {  
+export function SearchAbnormal(FormData) {  
     return Request({  // 发送请求
         method: 'POST',
         headers: {
             'Content-Type': 'application/form-data', // 设置请求头
         },
-        url: '/backend/vibration/conditionSearch/', 
+        url: '/backend/vibration/searchAbnormal/', 
         data: FormData, 
     }).then(function (response) {  
         if (response.status === 200) {
@@ -106,6 +106,31 @@ export function GetDevice() {
             return response;  
         } else {
             Message.error("获取所有传感器失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}
+
+
+//保存异常值数据
+export function SaveAbnormal(FormData) {  
+    return Request({  // 发送请求
+        method: 'POST',
+        url: '/backend/vibration/saveAbnormal/', 
+        data: FormData, 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            if(response.data.total == 0){
+                Message.info('暂无数据！')
+            }
+            else{
+                Message.success("异常值保存成功！");
+            }
+            console.log(response.data); 
+            return response;  
+        } else {
+            Message.error("异常值保存失败！");
         }
     }).catch(function (error) {  // catch 表示接收到错误响应后的操作
         console.log(error);

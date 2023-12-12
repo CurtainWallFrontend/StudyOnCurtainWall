@@ -16,6 +16,7 @@ class Image(models.Model):
     def __str__(self):
         return self.name
 
+
 class Abnormal(models.Model):
     time = models.DateTimeField(primary_key=True, db_comment='数据采集时间')  # The composite primary key (time, device_id, min, max, last_modified, data, direction) found, that is not supported. The first column is selected.
     device = models.ForeignKey('Device', models.DO_NOTHING, db_comment='传感器编号')
@@ -29,6 +30,8 @@ class Abnormal(models.Model):
         managed = True
         db_table = 'abnormal'
         unique_together = (('time', 'device', 'min', 'max', 'last_modified', 'data', 'direction'),)
+
+
 
 class Building(models.Model):
     building_id = models.AutoField(primary_key=True)
@@ -47,7 +50,6 @@ class Device(models.Model):
     class Meta:
         managed = True
         db_table = 'device'
-
 
 class Log(models.Model):
     time = models.DateTimeField(primary_key=True, db_comment='采集数据时间')  # The composite primary key (time, x, y, z, device_id) found, that is not supported. The first column is selected.

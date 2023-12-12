@@ -15,6 +15,7 @@ from django.core.paginator import Paginator
 from django.db import IntegrityError
 
 from datetime import datetime, timedelta
+from django.utils import timezone
 import re
 
 import smtplib
@@ -181,6 +182,7 @@ def data_smoothing(data, num_parts):
         result.append(average)
     return result
 
+#从用户上传的文件名中提取长度
 def extract_time(origin_string):
     pattern = r"\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}"
     match = re.search(pattern, origin_string)
@@ -204,7 +206,6 @@ class VibrationData(GenericViewSet):
 
         try:
             uploaded_file = request.FILES['csv']  # 获取上传的图像文件
-            print(uploaded_file)
             device_name = uploaded_file.name.split("_")[0][6:] #设备名称
             device = Device.objects.get(device_name=device_name)
             start_time = extract_time(uploaded_file.name)
@@ -259,6 +260,7 @@ class VibrationData(GenericViewSet):
                 error_message = "Duplicate records found"
                 error_code = "DUPLICATE_RECORDS"
                 return Response({"error": error_message, "code": error_code,
+                                 "device_id": device.device_id,
                                  "yData":{
                                      'x': x_data,
                                      'y': y_data,
@@ -276,6 +278,7 @@ class VibrationData(GenericViewSet):
                     'y':y_data,
                     'z':z_data,
                 },
+                "device_id": device.device_id,
                 'csv_url': file_path + uploaded_file.name,
             },status=status.HTTP_200_OK)
 
@@ -329,11 +332,66 @@ class VibrationData(GenericViewSet):
     #保存异常值
     @action(methods=['post'], detail=False)
     def save_abnormal(self,request):
-        print(request)
+        device_id = request.data['device']
+        abnormalData = request.data['abnormalData']
+        min = request.data['min']
+        max = request.data['max']
+        file_name = os.path.basename(request.data['url'])
+        start_time = extract_time(file_name)
+
+        unique_logs = []
+        existing_records = set()
+        records = []
+
+        try:
+            # 保存到数据库
+            for i in range(len(abnormalData['x'])):
+                record = Abnormal(time=start_time,
+                          device_id=device_id,
+                          min=min,
+                          max=max,
+                          direction='x',
+                          data=abnormalData['x'][i],
+                          last_modified=datetime.now())
+                records.append(record)
+            for i in range(len(abnormalData['y'])):
+                record = Abnormal(time=start_time,
+                          device_id=device_id,
+                          min=min,
+                          max=max,
+                          direction='y',
+                          data=abnormalData['y'][i],
+                          last_modified=datetime.now())
+                records.append(record)
+            for i in range(len(abnormalData['z'])):
+                record = Abnormal(time=start_time,
+                          device_id=device_id,
+                          min=min,
+                          max=max,
+                          direction='z',
+                          data=abnormalData['z'][i],
+                          last_modified=datetime.now())
+                records.append(record)
+
+            try:
+                Abnormal.objects.bulk_create(records,ignore_conflicts=True)
+            except Exception as e:
+                # 处理其他插入错误
+                error_message = str(e)
+                error_code = "INSERT_ERROR"
+                return Response({"error": error_message, "code": error_code}, status=500)
+
+            return Response(status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            # 处理异常情况
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
     #搜索正常值
     @action(methods=['post'], detail=False)
-    def search_normal(self,request):
+    def search_abnormal(self,request):
         try:
             building_id = request.POST['building']
             device_id = request.POST['equipment']
@@ -344,17 +402,18 @@ class VibrationData(GenericViewSet):
 
             #数据库查找
             building = Building.objects.get(building_id=building_id)
-            logs = Log.objects.filter(device_id=device_id)
+            logs = Abnormal.objects.filter(device_id=device_id)
             result = []
             for log in logs:
                 row = {
-                    "date": log.time.strftime('%Y-%m-%d %H:%M:%S'),
-                    "id": log.id,
+                    "time": log.time.strftime('%Y-%m-%d %H:%M:%S'),
                     "building": building.building_name,
                     "equipment": log.device.device_name,
-                    "x": log.x,
-                    "y": log.y,
-                    "z": log.z,
+                    "data": log.data,
+                    "direction": log.direction,
+                    "last_modified": log.last_modified.strftime('%Y-%m-%d %H:%M:%S'),
+                    "min": log.min,
+                    "max": log.max,
                 }
                 result.append(row)
             paginator = Paginator(result, pageSize)

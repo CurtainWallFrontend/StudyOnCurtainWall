@@ -30,16 +30,17 @@
         <div style="width: 80%; margin: 30px auto;text-align: center;">
             <el-table 
                 :data="tableData" 
-                :default-sort="{ prop: 'date', order: 'descending' }"
+                :default-sort="{ prop: 'last_modified', order: 'descending' }"
                 border 
                 style="width: 100%">
-                <el-table-column prop="date" sortable label="Date" width="200px"/>
-                <el-table-column prop="id" label="ID" />
-                <el-table-column prop="building" label="Building" />
-                <el-table-column prop="equipment" label="Equipment" />
-                <el-table-column prop="x" label="X"/>
-                <el-table-column prop="y" label="Y" />
-                <el-table-column prop="z" label="Z" />
+                <el-table-column prop="time"  label="采集时间" width="200px"/>
+                <el-table-column prop="building" label="建筑" />
+                <el-table-column prop="equipment" label="传感器" />
+                <el-table-column prop="data" label="异常值"/>
+                <el-table-column prop="min" label="异常下限"/>
+                <el-table-column prop="max" label="异常上限"/>
+                <el-table-column prop="direction" label="方向" />
+                <el-table-column prop="last_modified" sortable label="上次修改" width="200px"/>
             </el-table>
             <!-- 分页 -->
             <el-pagination class="pagination"
@@ -57,7 +58,7 @@
 
 <script setup>
     import { ref, onMounted } from 'vue'
-    import { ConditionSearch, GetDevice } from '@/api/vibration.js'
+    import { SearchAbnormal, GetDevice } from '@/api/vibration.js'
     import router from "@/router/index.js"
 
     const options = ref()
@@ -88,7 +89,7 @@
     const formRef = ref(null);
 
     const currentPage = ref(1); 
-    const pageSize = ref(10);
+    const pageSize = ref(20);
     const total = ref(0);
 
     // 表格数据
@@ -116,7 +117,7 @@
                 formData.append('pageNo', currentPage.value);
                 formData.append('pageSize', pageSize.value);
                 //发送请求
-                ConditionSearch(formData)
+                SearchAbnormal(formData)
                 .then(function(result){
                     total.value = result.data.total;
                     tableData.value = result.data.records;

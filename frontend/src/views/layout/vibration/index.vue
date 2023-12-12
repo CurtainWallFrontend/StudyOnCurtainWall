@@ -61,7 +61,7 @@
 
 <script setup>
     import router from "@/router/index.js"
-    import { UploadCsv, FilterOutlier, SendMail } from '@/api/vibration.js'
+    import { UploadCsv, FilterOutlier, SendMail, SaveAbnormal } from '@/api/vibration.js'
     import { ref, reactive } from 'vue'
     import * as echarts from 'echarts';
     import { ElMessage } from "element-plus";
@@ -70,6 +70,7 @@
     const dialogVisible = ref(false);
     const saveDialogVisible = ref(false);
     let abnormalData;
+    const device_id = ref();
 
     const range = ref([-0.5, 0.5])
 
@@ -109,6 +110,7 @@
                 .then(function (result) {
                     chartData.value = result.data;
                     file_url.value = result.data.csv_url;
+                    device_id.value = result.data.device_id;
 
                     // 绘制echarts折线图
                     var myChart = echarts.init(document.getElementById('main'));
@@ -275,7 +277,22 @@
 
     //保存异常值筛选结果
     const saveAbnormal = () =>{
-        console.log('saveAbnormalData')
+        print(file_url.value)
+        saveDialogVisible.value = false;
+
+        SaveAbnormal({
+            abnormalData: abnormalData,
+            max: range.value[1],
+            min: range.value[0],
+            device: device_id.value,
+            url: file_url.value,
+        })
+        .then(function(result){
+            console.log(result);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
     }
     
 

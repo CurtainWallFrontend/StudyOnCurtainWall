@@ -12,7 +12,7 @@ urlpatterns = [
     path('saveimage/', GetImg.as_view({'post': 'save_image'})),
     path('vibration/uploadCsv/', VibrationData.as_view({'post':'save_csv'})),
     path('vibration/filterOutlier/', VibrationData.as_view({'post':'filter_outlier'})),
-    path('vibration/searchNormal/', VibrationData.as_view({'post':'search_normal'})),
+    path('vibration/searchAbnormal/', VibrationData.as_view({'post':'search_abnormal'})),
     path('vibration/sendMail/', SendMail.as_view({'post': 'send_mail'})),
     path('vibration/getDevice/',DeviceAPI.as_view({'get':'get_device'})),
     path('vibration/addDevice/', DeviceAPI.as_view({'get': 'add_device'})),
