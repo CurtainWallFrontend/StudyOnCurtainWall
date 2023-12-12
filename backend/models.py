@@ -17,6 +17,22 @@ class Image(models.Model):
         return self.name
 
 
+class Abnormal(models.Model):
+    time = models.DateTimeField(primary_key=True, db_comment='数据采集时间')  # The composite primary key (time, device_id, min, max, last_modified, data, direction) found, that is not supported. The first column is selected.
+    device = models.ForeignKey('Device', models.DO_NOTHING, db_comment='传感器编号')
+    min = models.FloatField(db_comment='阈值下限')
+    max = models.FloatField(db_comment='阈值上限')
+    last_modified = models.DateTimeField(db_comment='上次修改时间')
+    data = models.FloatField(db_comment='异常值数据值')
+    direction = models.CharField(max_length=255, db_comment='数据方向(x/y/z)')
+
+    class Meta:
+        managed = True
+        db_table = 'abnormal'
+        unique_together = (('time', 'device', 'min', 'max', 'last_modified', 'data', 'direction'),)
+
+
+
 class Building(models.Model):
     building_id = models.AutoField(primary_key=True)
     building_name = models.CharField(max_length=30, blank=True, null=True)
@@ -35,18 +51,17 @@ class Device(models.Model):
         managed = True
         db_table = 'device'
 
-
 class Log(models.Model):
-    time = models.DateTimeField()
-    x = models.FloatField()
-    y = models.FloatField()
-    z = models.FloatField()
-    device = models.ForeignKey(Device, models.DO_NOTHING)
+    time = models.DateTimeField(primary_key=True, db_comment='采集数据时间')  # The composite primary key (time, x, y, z, device_id) found, that is not supported. The first column is selected.
+    x = models.FloatField(db_comment='x方向数据')
+    y = models.FloatField(db_comment='y方向数据')
+    z = models.FloatField(db_comment='z方向数据')
+    device = models.ForeignKey(Device, models.DO_NOTHING, db_comment='传感器编号')
 
     class Meta:
         managed = True
         db_table = 'log'
-        unique_together = (('id', 'time', 'x', 'y', 'z', 'device'),)
+        unique_together = (('time', 'x', 'y', 'z', 'device'),)
 
 
 class User(models.Model):

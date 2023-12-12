@@ -22,6 +22,7 @@
     <h2 v-if="showAbnormal" style="margin:30px">4.异常值筛选结果</h2>
     <div v-if="showAbnormal">
         <el-button type="danger" style="margin-bottom: 20px" @click="dialogVisible = true">发送报告</el-button>
+        <el-button type="primary" style="margin-bottom: 20px" @click="saveDialogVisible = true">保存结果</el-button>
         <el-dialog
             v-model="dialogVisible"
             title="提示"
@@ -38,20 +39,38 @@
             </span>
             </template>
         </el-dialog>
+        <el-dialog
+            v-model="saveDialogVisible"
+            title="提示"
+            width="30%"
+            :before-close="handleClose"
+        >
+            <span>保存筛选的异常值数据到数据库？</span>
+            <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="saveDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveAbnormal">
+                    确定
+                </el-button>
+            </span>
+            </template>
+        </el-dialog>
     </div>
     <div id="abnormal" style="width: 100%;height:500px;"></div>
 </template>
 
 <script setup>
     import router from "@/router/index.js"
-    import { UploadCsv, FilterOutlier, SendMail } from '@/api/vibration.js'
+    import { UploadCsv, FilterOutlier, SendMail, SaveAbnormal } from '@/api/vibration.js'
     import { ref, reactive } from 'vue'
     import * as echarts from 'echarts';
     import { ElMessage } from "element-plus";
 
     var chartData = ref();
     const dialogVisible = ref(false);
+    const saveDialogVisible = ref(false);
     let abnormalData;
+    const device_id = ref();
 
     const range = ref([-0.5, 0.5])
 
@@ -91,6 +110,7 @@
                 .then(function (result) {
                     chartData.value = result.data;
                     file_url.value = result.data.csv_url;
+                    device_id.value = result.data.device_id;
 
                     // 绘制echarts折线图
                     var myChart = echarts.init(document.getElementById('main'));
@@ -245,6 +265,27 @@
             max: range.value[1],
             min: range.value[0],
             device: 'Device320EA412',
+        })
+        .then(function(result){
+            console.log(result);
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+    }
+
+
+    //保存异常值筛选结果
+    const saveAbnormal = () =>{
+        print(file_url.value)
+        saveDialogVisible.value = false;
+
+        SaveAbnormal({
+            abnormalData: abnormalData,
+            max: range.value[1],
+            min: range.value[0],
+            device: device_id.value,
+            url: file_url.value,
         })
         .then(function(result){
             console.log(result);

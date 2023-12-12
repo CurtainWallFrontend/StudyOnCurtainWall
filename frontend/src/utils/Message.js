@@ -23,6 +23,9 @@ const message = {
     warning: (msg, callback) => {
         showMessage(msg, callback, "warning");
     },
+    info: (msg, callback) => {
+        showMessage(msg, callback, "info");
+    }
 }
 
 export default message;

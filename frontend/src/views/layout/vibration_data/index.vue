@@ -1,65 +1,78 @@
 <template>
-    <el-button @click="GoToDash">进入仪表盘</el-button>
+    <div v-loading="loading">
+        <el-button @click="GoToDash">进入仪表盘</el-button>
 
-    <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
-        <h3>选择条件进行数据查找</h3>
-        <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
-            <el-form-item label="采集时间" prop="time">
-            <el-date-picker
-                v-model="selectedInfo.time"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-            />
-            </el-form-item>
-            <el-form-item label="选择设备" prop="equipment">
-                <el-cascader v-model="selectedInfo.equipment" 
-                    :options="options" 
-                    placeholder="请选择建筑/传感器编号" 
-                    @change="change_select" 
-                    clearable/>
-            </el-form-item>
-            <el-form-item >
-                <el-button type="primary" @click="search" style="margin:auto">搜索</el-button>
-            </el-form-item>
-        </el-form>
+        <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
+            <h3>选择条件进行数据查找</h3>
+            <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
+                <!-- <el-form-item label="采集时间" prop="time">
+                <el-date-picker
+                    v-model="selectedInfo.time"
+                    type="datetimerange"
+                    range-separator="至"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                />
+                </el-form-item> -->
+                <el-form-item label="选择设备" prop="equipment">
+                    <el-cascader v-model="selectedInfo.equipment" 
+                        :options="options" 
+                        placeholder="请选择建筑/传感器编号" 
+                        @change="change_select" 
+                        clearable/>
+                </el-form-item>
+                <el-form-item >
+                    <el-button type="primary" @click="search" style="margin:auto">搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <div style="width: 80%; margin: 30px auto;text-align: center;">
+            <el-table 
+                :data="tableData" 
+                :default-sort="{ prop: 'last_modified', order: 'descending' }"
+                border 
+                style="width: 100%">
+                <el-table-column prop="time"  label="采集时间" width="200px"/>
+                <el-table-column prop="building" label="建筑" />
+                <el-table-column prop="equipment" label="传感器" />
+                <el-table-column prop="data" label="异常值"/>
+                <el-table-column prop="min" label="异常下限"/>
+                <el-table-column prop="max" label="异常上限"/>
+                <el-table-column prop="direction" label="方向" />
+                <el-table-column prop="last_modified" sortable label="上次修改" width="200px"/>
+            </el-table>
+            <!-- 分页 -->
+            <el-pagination class="pagination"
+                background 
+                v-model:currentPage="currentPage" 
+                v-model:pageSize="pageSize" 
+                :total="total"
+            @current-change="handlePageChange" />
+        </div>
+
+        <div id="main" style="width: 100%;height:500px;"></div>
     </div>
-
-    <div style="width: 80%; margin: 30px auto;text-align: center;">
-        <el-table 
-            :data="tableData" 
-            :default-sort="{ prop: 'date', order: 'descending' }"
-            border 
-            style="width: 100%">
-            <el-table-column prop="date" sortable label="Date" />
-            <el-table-column prop="id" label="ID" />
-            <el-table-column prop="building" label="Building" />
-            <el-table-column prop="equipment" label="Equipment" />
-            <el-table-column prop="x" label="X"/>
-            <el-table-column prop="y" label="Y" />
-            <el-table-column prop="z" label="Z" />
-        </el-table>
-        <!-- 分页 -->
-        <el-pagination class="pagination"
-            background 
-            v-model:currentPage="currentPage" 
-            v-model:pageSize="pageSize" 
-            :total="total"
-           @current-change="handlePageChange" />
-    </div>
-
-    <div id="main" style="width: 100%;height:500px;"></div>
 
 </template>
 
 <script setup>
     import { ref, onMounted } from 'vue'
-    import { ConditionSearch } from '@/api/vibration.js'
+    import { SearchAbnormal, GetDevice } from '@/api/vibration.js'
     import router from "@/router/index.js"
+
+    const options = ref()
+    const loading = ref(false) //加载
 
     onMounted(()=>{
         // 向后端请求获取options
+        GetDevice()
+        .then(function(result){
+            options.value = result.data.options
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     })
 
     // 跳转到仪表盘
@@ -76,94 +89,12 @@
     const formRef = ref(null);
 
     const currentPage = ref(1); 
-    const pageSize = ref(10);
+    const pageSize = ref(20);
     const total = ref(0);
 
     // 表格数据
     const tableData = ref()
 
-    // 暂时写死：后期存储到数据库中，可以由用户自行添加建筑、设备型号；
-    // 从后端获取这些数据或选择
-    const options = ref([
-        {
-            'value': 'A楼',
-            'label': 'A楼',
-            'children':[
-                {
-                   'value': 'A77C5238',
-                    'label': 'A77C5238',
-                },
-                {
-                    'value': 'F853ED49',
-                    'label': 'F853ED49',
-                },
-                {
-                    'value': '3326F78D',
-                    'label': '3326F78D',
-                },
-                {
-                    'value': '350E6EFF',
-                    'label': '350E6EFF',
-                },
-            ]
-        },
-        {
-            'value': '综合楼',
-            'label': '综合楼',
-            'children':[
-                {
-                    'value': 'E884C99D',
-                    'label': 'E884C99D',
-                },
-                {
-                    'value': '7749E4D9',
-                    'label': '7749E4D9',
-                },
-                {
-                    'value': '7A6BA8C8',
-                    'label': '7A6BA8C8',
-                },
-                {
-                    'value': '8850A7D7',
-                    'label': '8850A7D7',
-                },
-                {
-                    'value': '4787BE3A',
-                    'label': '4787BE3A',
-                },
-            ]
-        },
-        {
-            'value': '经管大楼',
-            'label': '经管大楼',
-            'children':[
-                {
-                    'value': '29FA1867',
-                    'label': '29FA1867',
-                },
-                {
-                    'value': '350E6EFF',
-                    'label': '350E6EFF',
-                },
-                {
-                    'value': '3326F78D',
-                    'label': '3326F78D',
-                },
-                {
-                    'value': 'A77C5238',
-                    'label': 'A77C5238',
-                },
-                {
-                    'value': 'E43AC643',
-                    'label': 'E43AC643',
-                },
-                {
-                    'value': '4787BE3A',
-                    'label': '4787BE3A',
-                },
-            ]
-        },
-    ]);
 
     // 已选传感器信息
     const selectedInfo = ref({
@@ -175,6 +106,7 @@
 
     // 条件搜索
     const search = () =>{
+        loading.value = true
         formRef.value.validate((valid) => {
             if(valid){   //表单验证成功
                 let formData = new FormData();
@@ -185,14 +117,17 @@
                 formData.append('pageNo', currentPage.value);
                 formData.append('pageSize', pageSize.value);
                 //发送请求
-                ConditionSearch(formData)
+                SearchAbnormal(formData)
                 .then(function(result){
                     total.value = result.data.total;
                     tableData.value = result.data.records;
                 })
                 .catch(function (error) {
                     console.log(error);
-                });
+                })
+                .finally(()=>{
+                    loading.value = false;
+                })
             }
             else{
                 ElMessage.error('请检查表单是否填写正确！')
@@ -202,7 +137,7 @@
 
 
     const change_select = () =>{
-        search();
+        // search();
     }
 
 

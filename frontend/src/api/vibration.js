@@ -20,6 +20,7 @@ export function UploadCsv(FormData) {  // 在 src/views/login/index.vue 里调�
             Message.error("文件上传失败");
         }
     }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        Message.info("文件已上传过");
         console.log(error);
     });
 }
@@ -48,19 +49,23 @@ export function FilterOutlier(FormData) {
 }
 
 // 条件搜索数据库
-export function ConditionSearch(FormData) {  
+export function SearchAbnormal(FormData) {  
     return Request({  // 发送请求
         method: 'POST',
         headers: {
             'Content-Type': 'application/form-data', // 设置请求头
         },
-        url: '/backend/vibration/conditionSearch/', 
+        url: '/backend/vibration/searchAbnormal/', 
         data: FormData, 
     }).then(function (response) {  
         if (response.status === 200) {
-            Message.success("搜索成功！");
-            
-            console.log(response); 
+            if(response.data.total == 0){
+                Message.info('暂无数据！')
+            }
+            else{
+                Message.success("搜索成功！");
+            }
+            console.log(response.data); 
             return response;  
         } else {
             Message.error("搜索失败！");
@@ -85,6 +90,47 @@ export function SendMail(data) {
             return response;  
         } else {
             Message.error("发送邮件失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}
+
+// 获取所有设备信息
+export function GetDevice() {  
+    return Request({  // 发送请求
+        method: 'GET',
+        url: '/backend/vibration/getDevice/', 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            return response;  
+        } else {
+            Message.error("获取所有传感器失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}
+
+
+//保存异常值数据
+export function SaveAbnormal(FormData) {  
+    return Request({  // 发送请求
+        method: 'POST',
+        url: '/backend/vibration/saveAbnormal/', 
+        data: FormData, 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            if(response.data.total == 0){
+                Message.info('暂无数据！')
+            }
+            else{
+                Message.success("异常值保存成功！");
+            }
+            console.log(response.data); 
+            return response;  
+        } else {
+            Message.error("异常值保存失败！");
         }
     }).catch(function (error) {  // catch 表示接收到错误响应后的操作
         console.log(error);
