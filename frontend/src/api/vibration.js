@@ -20,6 +20,7 @@ export function UploadCsv(FormData) {  // 在 src/views/login/index.vue 里调�
             Message.error("文件上传失败");
         }
     }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        Message.info("文件已上传过");
         console.log(error);
     });
 }
@@ -58,9 +59,13 @@ export function ConditionSearch(FormData) {
         data: FormData, 
     }).then(function (response) {  
         if (response.status === 200) {
-            Message.success("搜索成功！");
-            
-            console.log(response); 
+            if(response.data.total == 0){
+                Message.info('暂无数据！')
+            }
+            else{
+                Message.success("搜索成功！");
+            }
+            console.log(response.data); 
             return response;  
         } else {
             Message.error("搜索失败！");
@@ -98,9 +103,6 @@ export function GetDevice() {
         url: '/backend/vibration/getDevice/', 
     }).then(function (response) {  
         if (response.status === 200) {
-            Message.success("获取所有传感器！");
-            
-            console.log(response); 
             return response;  
         } else {
             Message.error("获取所有传感器失败！");

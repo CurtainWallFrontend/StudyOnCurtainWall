@@ -1,55 +1,57 @@
 <template>
-    <el-button @click="GoToDash">进入仪表盘</el-button>
+    <div v-loading="loading">
+        <el-button @click="GoToDash">进入仪表盘</el-button>
 
-    <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
-        <h3>选择条件进行数据查找</h3>
-        <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
-            <!-- <el-form-item label="采集时间" prop="time">
-            <el-date-picker
-                v-model="selectedInfo.time"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始时间"
-                end-placeholder="结束时间"
-            />
-            </el-form-item> -->
-            <el-form-item label="选择设备" prop="equipment">
-                <el-cascader v-model="selectedInfo.equipment" 
-                    :options="options" 
-                    placeholder="请选择建筑/传感器编号" 
-                    @change="change_select" 
-                    clearable/>
-            </el-form-item>
-            <el-form-item >
-                <el-button type="primary" @click="search" style="margin:auto">搜索</el-button>
-            </el-form-item>
-        </el-form>
+        <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
+            <h3>选择条件进行数据查找</h3>
+            <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
+                <!-- <el-form-item label="采集时间" prop="time">
+                <el-date-picker
+                    v-model="selectedInfo.time"
+                    type="datetimerange"
+                    range-separator="至"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                />
+                </el-form-item> -->
+                <el-form-item label="选择设备" prop="equipment">
+                    <el-cascader v-model="selectedInfo.equipment" 
+                        :options="options" 
+                        placeholder="请选择建筑/传感器编号" 
+                        @change="change_select" 
+                        clearable/>
+                </el-form-item>
+                <el-form-item >
+                    <el-button type="primary" @click="search" style="margin:auto">搜索</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+
+        <div style="width: 80%; margin: 30px auto;text-align: center;">
+            <el-table 
+                :data="tableData" 
+                :default-sort="{ prop: 'date', order: 'descending' }"
+                border 
+                style="width: 100%">
+                <el-table-column prop="date" sortable label="Date" width="200px"/>
+                <el-table-column prop="id" label="ID" />
+                <el-table-column prop="building" label="Building" />
+                <el-table-column prop="equipment" label="Equipment" />
+                <el-table-column prop="x" label="X"/>
+                <el-table-column prop="y" label="Y" />
+                <el-table-column prop="z" label="Z" />
+            </el-table>
+            <!-- 分页 -->
+            <el-pagination class="pagination"
+                background 
+                v-model:currentPage="currentPage" 
+                v-model:pageSize="pageSize" 
+                :total="total"
+            @current-change="handlePageChange" />
+        </div>
+
+        <div id="main" style="width: 100%;height:500px;"></div>
     </div>
-
-    <div style="width: 80%; margin: 30px auto;text-align: center;">
-        <el-table 
-            :data="tableData" 
-            :default-sort="{ prop: 'date', order: 'descending' }"
-            border 
-            style="width: 100%">
-            <el-table-column prop="date" sortable label="Date" width="200px"/>
-            <el-table-column prop="id" label="ID" />
-            <el-table-column prop="building" label="Building" />
-            <el-table-column prop="equipment" label="Equipment" />
-            <el-table-column prop="x" label="X"/>
-            <el-table-column prop="y" label="Y" />
-            <el-table-column prop="z" label="Z" />
-        </el-table>
-        <!-- 分页 -->
-        <el-pagination class="pagination"
-            background 
-            v-model:currentPage="currentPage" 
-            v-model:pageSize="pageSize" 
-            :total="total"
-           @current-change="handlePageChange" />
-    </div>
-
-    <div id="main" style="width: 100%;height:500px;"></div>
 
 </template>
 
@@ -59,6 +61,7 @@
     import router from "@/router/index.js"
 
     const options = ref()
+    const loading = ref(false) //加载
 
     onMounted(()=>{
         // 向后端请求获取options
@@ -102,6 +105,7 @@
 
     // 条件搜索
     const search = () =>{
+        loading.value = true
         formRef.value.validate((valid) => {
             if(valid){   //表单验证成功
                 let formData = new FormData();
@@ -119,7 +123,10 @@
                 })
                 .catch(function (error) {
                     console.log(error);
-                });
+                })
+                .finally(()=>{
+                    loading.value = false;
+                })
             }
             else{
                 ElMessage.error('请检查表单是否填写正确！')

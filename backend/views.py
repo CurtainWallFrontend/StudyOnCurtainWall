@@ -12,8 +12,10 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
+from django.db import IntegrityError
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
 
 import smtplib
 from email.mime.text import MIMEText
@@ -26,7 +28,7 @@ import torch
 import cv2
 import sys
 
-class Test(GenericViewSet):
+class DeviceAPI(GenericViewSet):
     serializer_class = ImageSerializer
     queryset = Device.objects.all()
 
@@ -166,10 +168,31 @@ class GetImg(GenericViewSet):
             except Exception as e:
                 return Response({'error': str(e),'message': 'Image uploading fail.'}, status=status.HTTP_400_BAD_REQUEST)
 
-# 上传CSV振动数据文件
-class UploadCsv(GenericViewSet):
+            # 数据平滑
+
+#数据平滑
+def data_smoothing(data, num_parts):
+    n = len(data)
+    chunk_size = n // num_parts  # 每份大小
+    result = []
+    for i in range(0, n, chunk_size):
+        chunk = data[i:i + chunk_size]
+        average = sum(chunk) / len(chunk)
+        result.append(average)
+    return result
+
+def extract_time(origin_string):
+    pattern = r"\d{4}_\d{2}_\d{2}_\d{2}_\d{2}_\d{2}"
+    match = re.search(pattern, origin_string)
+    if match:
+        datetime_str = match.group()
+    datetime_obj = datetime.strptime(datetime_str,"%Y_%m_%d_%H_%M_%S")
+    return datetime_obj
+
+class VibrationData(GenericViewSet):
     serializer_class = ImageSerializer
 
+    # 保存csv文件到数据库
     @action(methods=['post'], detail=False)
     def save_csv(self,request):
         file_path = './backend/media/' # 指定保存文件的文件夹路径
@@ -182,12 +205,9 @@ class UploadCsv(GenericViewSet):
         try:
             uploaded_file = request.FILES['csv']  # 获取上传的图像文件
             print(uploaded_file)
-            # building = request.POST['building']
-            # equipment = request.POST['equipment']
-            # start_time = request.POST['start_time']
-            # end_time = request.POST['end_time']
-            #
-            # print(uploaded_file.name,building,equipment,start_time,end_time)
+            device_name = uploaded_file.name.split("_")[0][6:] #设备名称
+            device = Device.objects.get(device_name=device_name)
+            start_time = extract_time(uploaded_file.name)
 
             # 判断文件是否存在
             if os.path.exists(file_path + uploaded_file.name):
@@ -216,6 +236,40 @@ class UploadCsv(GenericViewSet):
             y_data = data_smoothing(y_data,parts)
             z_data = data_smoothing(z_data,parts)
 
+
+            unique_logs = []
+            existing_records = set()
+
+            #保存到数据库
+            for i in range(parts):
+                time = start_time + timedelta(seconds=i)
+                log = Log(time=time,
+                          x=x_data[i],
+                          y=y_data[i],
+                          z=z_data[i],
+                          device_id=device.device_id)
+                record_key = (log.time,log.x,log.y,log.z,log.device_id)
+                if record_key not in existing_records:
+                    unique_logs.append(log)
+                    existing_records.add(record_key)
+            try:
+                Log.objects.bulk_create(unique_logs)
+            except IntegrityError:
+                # 处理插入冲突错误
+                error_message = "Duplicate records found"
+                error_code = "DUPLICATE_RECORDS"
+                return Response({"error": error_message, "code": error_code,
+                                 "yData":{
+                                     'x': x_data,
+                                     'y': y_data,
+                                     'z': z_data,
+                                 }}, status=status.HTTP_200_OK)
+            except Exception as e:
+                # 处理其他插入错误
+                error_message = str(e)
+                error_code = "INSERT_ERROR"
+                return Response({"error": error_message, "code": error_code}, status=500)
+
             return Response({
                 'yData':{
                     'x':x_data,
@@ -229,11 +283,6 @@ class UploadCsv(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-
-# 异常值筛选
-class FilterOutlier(GenericViewSet):
-    serializer_class = ImageSerializer
 
     @action(methods=['post'], detail=False)
     def filter_outlier(self,request):
@@ -277,23 +326,14 @@ class FilterOutlier(GenericViewSet):
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-def data_smoothing(data, num_parts):
-    n = len(data)
-    chunk_size = n // num_parts  # 每份大小
-    result = []
-    for i in range(0, n, chunk_size):
-        chunk = data[i:i + chunk_size]
-        average = sum(chunk) / len(chunk)
-        result.append(average)
-    return result
-
-# 条件搜索：数据库数据
-class ConditionSearch(GenericViewSet):
-    serializer_class = ImageSerializer
-    # queryset = Log.objects.all()
-
+    #保存异常值
     @action(methods=['post'], detail=False)
-    def condition_search(self,request):
+    def save_abnormal(self,request):
+        print(request)
+
+    #搜索正常值
+    @action(methods=['post'], detail=False)
+    def search_normal(self,request):
         try:
             building_id = request.POST['building']
             device_id = request.POST['equipment']
@@ -329,6 +369,7 @@ class ConditionSearch(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # 发送邮件到指定邮箱
