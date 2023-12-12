@@ -20,7 +20,7 @@
     </div>
     
     <h3 class="data">数据库</h3>
-    <el-column class="database">
+    <el-col class="database">
           <el-card class="card-item">
             <div class="card-content">
               <span>图像分割 幕墙结果</span>
@@ -47,12 +47,12 @@
               <el-button type="primary" size="small">点击查看</el-button>
             </div>
           </el-card>
-    </el-column>
+    </el-col>
       <el-card  class="vib-card">
         <img src="../../../assets/vib.png" class="image">
         <div style="padding: 14px;">
           <div class="bottom clearfix">
-            <el-button type="text" class="button" @click="navigateToVibration">点击进入</el-button>
+            <el-button class="button" @click="navigateToVibration">点击进入</el-button>
           </div>
         </div>
       </el-card>

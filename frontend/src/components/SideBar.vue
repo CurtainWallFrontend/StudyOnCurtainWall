@@ -3,7 +3,9 @@
     <el-aside width=100%>
         <h2>LOGO</h2>
         <el-menu :default-active="defaultActive" router class = "menu" @select="handleSelect">
-            <el-menu-item index="dashboard">仪表盘</el-menu-item>
+            <el-menu-item index="dashboard" style="color:rgb(226, 226, 226);">
+              仪表盘
+            </el-menu-item>
             <el-sub-menu index="dashboard">
                 <template #title>
                     <span style="color:rgb(204, 204, 204);">功能</span>
@@ -54,12 +56,11 @@ onMounted(() => {
     top:10%;
     left:0%;
     width:100%;
-    background-color: rgb(40, 68, 121);
+    background-color: #2a3f75;
 }
 .el-sub-menu .el-menu-item {
-  background-color: rgb(54, 91, 156) !important;
+  background-color: #506baf !important;
   color:rgb(204, 204, 204);
-
 }
 
 /* 设置选鼠标指针浮动在一级菜单的设置 */
