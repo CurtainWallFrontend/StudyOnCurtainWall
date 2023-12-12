@@ -80,7 +80,7 @@ const updateLogic = () => {
     top:0%;
     width:18%;
     height:100%;
-    background-color: rgb(0, 23, 52);
+    background-color: #00205B;
     color:white;
 }
 .func-zone{
