@@ -90,3 +90,22 @@ export function SendMail(data) {
         console.log(error);
     });
 }
+
+// 获取所有设备信息
+export function GetDevice() {  
+    return Request({  // 发送请求
+        method: 'GET',
+        url: '/backend/vibration/getDevice/', 
+    }).then(function (response) {  
+        if (response.status === 200) {
+            Message.success("获取所有传感器！");
+            
+            console.log(response); 
+            return response;  
+        } else {
+            Message.error("获取所有传感器失败！");
+        }
+    }).catch(function (error) {  // catch 表示接收到错误响应后的操作
+        console.log(error);
+    });
+}

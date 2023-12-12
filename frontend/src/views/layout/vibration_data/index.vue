@@ -4,7 +4,7 @@
     <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
         <h3>选择条件进行数据查找</h3>
         <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
-            <el-form-item label="采集时间" prop="time">
+            <!-- <el-form-item label="采集时间" prop="time">
             <el-date-picker
                 v-model="selectedInfo.time"
                 type="datetimerange"
@@ -12,7 +12,7 @@
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
             />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="选择设备" prop="equipment">
                 <el-cascader v-model="selectedInfo.equipment" 
                     :options="options" 
@@ -32,7 +32,7 @@
             :default-sort="{ prop: 'date', order: 'descending' }"
             border 
             style="width: 100%">
-            <el-table-column prop="date" sortable label="Date" />
+            <el-table-column prop="date" sortable label="Date" width="200px"/>
             <el-table-column prop="id" label="ID" />
             <el-table-column prop="building" label="Building" />
             <el-table-column prop="equipment" label="Equipment" />
@@ -55,11 +55,20 @@
 
 <script setup>
     import { ref, onMounted } from 'vue'
-    import { ConditionSearch } from '@/api/vibration.js'
+    import { ConditionSearch, GetDevice } from '@/api/vibration.js'
     import router from "@/router/index.js"
+
+    const options = ref()
 
     onMounted(()=>{
         // 向后端请求获取options
+        GetDevice()
+        .then(function(result){
+            options.value = result.data.options
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
     })
 
     // 跳转到仪表盘
@@ -84,86 +93,86 @@
 
     // 暂时写死：后期存储到数据库中，可以由用户自行添加建筑、设备型号；
     // 从后端获取这些数据或选择
-    const options = ref([
-        {
-            'value': 'A楼',
-            'label': 'A楼',
-            'children':[
-                {
-                   'value': 'A77C5238',
-                    'label': 'A77C5238',
-                },
-                {
-                    'value': 'F853ED49',
-                    'label': 'F853ED49',
-                },
-                {
-                    'value': '3326F78D',
-                    'label': '3326F78D',
-                },
-                {
-                    'value': '350E6EFF',
-                    'label': '350E6EFF',
-                },
-            ]
-        },
-        {
-            'value': '综合楼',
-            'label': '综合楼',
-            'children':[
-                {
-                    'value': 'E884C99D',
-                    'label': 'E884C99D',
-                },
-                {
-                    'value': '7749E4D9',
-                    'label': '7749E4D9',
-                },
-                {
-                    'value': '7A6BA8C8',
-                    'label': '7A6BA8C8',
-                },
-                {
-                    'value': '8850A7D7',
-                    'label': '8850A7D7',
-                },
-                {
-                    'value': '4787BE3A',
-                    'label': '4787BE3A',
-                },
-            ]
-        },
-        {
-            'value': '经管大楼',
-            'label': '经管大楼',
-            'children':[
-                {
-                    'value': '29FA1867',
-                    'label': '29FA1867',
-                },
-                {
-                    'value': '350E6EFF',
-                    'label': '350E6EFF',
-                },
-                {
-                    'value': '3326F78D',
-                    'label': '3326F78D',
-                },
-                {
-                    'value': 'A77C5238',
-                    'label': 'A77C5238',
-                },
-                {
-                    'value': 'E43AC643',
-                    'label': 'E43AC643',
-                },
-                {
-                    'value': '4787BE3A',
-                    'label': '4787BE3A',
-                },
-            ]
-        },
-    ]);
+    // const options = ref([
+    //     {
+    //         'value': 'A楼',
+    //         'label': 'A楼',
+    //         'children':[
+    //             {
+    //                'value': 'A77C5238',
+    //                 'label': 'A77C5238',
+    //             },
+    //             {
+    //                 'value': 'F853ED49',
+    //                 'label': 'F853ED49',
+    //             },
+    //             {
+    //                 'value': '3326F78D',
+    //                 'label': '3326F78D',
+    //             },
+    //             {
+    //                 'value': '350E6EFF',
+    //                 'label': '350E6EFF',
+    //             },
+    //         ]
+    //     },
+    //     {
+    //         'value': '综合楼',
+    //         'label': '综合楼',
+    //         'children':[
+    //             {
+    //                 'value': 'E884C99D',
+    //                 'label': 'E884C99D',
+    //             },
+    //             {
+    //                 'value': '7749E4D9',
+    //                 'label': '7749E4D9',
+    //             },
+    //             {
+    //                 'value': '7A6BA8C8',
+    //                 'label': '7A6BA8C8',
+    //             },
+    //             {
+    //                 'value': '8850A7D7',
+    //                 'label': '8850A7D7',
+    //             },
+    //             {
+    //                 'value': '4787BE3A',
+    //                 'label': '4787BE3A',
+    //             },
+    //         ]
+    //     },
+    //     {
+    //         'value': '经管大楼',
+    //         'label': '经管大楼',
+    //         'children':[
+    //             {
+    //                 'value': '29FA1867',
+    //                 'label': '29FA1867',
+    //             },
+    //             {
+    //                 'value': '350E6EFF',
+    //                 'label': '350E6EFF',
+    //             },
+    //             {
+    //                 'value': '3326F78D',
+    //                 'label': '3326F78D',
+    //             },
+    //             {
+    //                 'value': 'A77C5238',
+    //                 'label': 'A77C5238',
+    //             },
+    //             {
+    //                 'value': 'E43AC643',
+    //                 'label': 'E43AC643',
+    //             },
+    //             {
+    //                 'value': '4787BE3A',
+    //                 'label': '4787BE3A',
+    //             },
+    //         ]
+    //     },
+    // ]);
 
     // 已选传感器信息
     const selectedInfo = ref({

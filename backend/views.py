@@ -11,6 +11,9 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
+
+from datetime import datetime
 
 import smtplib
 from email.mime.text import MIMEText
@@ -32,14 +35,28 @@ class Test(GenericViewSet):
         devices = self.get_queryset()
         result = []
         for device in devices:
-            row = {
-                "building": device.building.building_name,
-                "id": device.device_id,
-                "name": device.device_name,
-            }
-            result.append(row)
+            building_option = next((opt for opt in result if opt["value"] == device.building.building_id),None)
 
-        return Response(result)
+            if building_option:
+                #如果楼宇已在结果中存在
+                building_option["children"].append({
+                    "value": device.device_id,
+                    "label": device.device_name
+                })
+            else:
+                building_option ={
+                    "value": device.building.building_id,
+                    "label": device.building.building_name,
+                    "children":[{
+                        "value": device.device_id,
+                        "label": device.device_name
+                    }]
+                }
+                result.append(building_option)
+
+        return Response({
+            'options': result,
+        },status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=False)
     def add_device(self,request):
@@ -273,59 +290,39 @@ def data_smoothing(data, num_parts):
 # 条件搜索：数据库数据
 class ConditionSearch(GenericViewSet):
     serializer_class = ImageSerializer
+    # queryset = Log.objects.all()
 
     @action(methods=['post'], detail=False)
     def condition_search(self,request):
         try:
-            building = request.POST['building']
-            equipment = request.POST['equipment']
+            building_id = request.POST['building']
+            device_id = request.POST['equipment']
             start_time = request.POST['start_time']
             end_time = request.POST['end_time']
             pageNo = request.POST['pageNo']
             pageSize = request.POST['pageSize']
 
             #数据库查找
+            building = Building.objects.get(building_id=building_id)
+            logs = Log.objects.filter(device_id=device_id)
+            result = []
+            for log in logs:
+                row = {
+                    "date": log.time.strftime('%Y-%m-%d %H:%M:%S'),
+                    "id": log.id,
+                    "building": building.building_name,
+                    "equipment": log.device.device_name,
+                    "x": log.x,
+                    "y": log.y,
+                    "z": log.z,
+                }
+                result.append(row)
+            paginator = Paginator(result, pageSize)
+            records = list(paginator.get_page(pageNo))
 
             return Response({
-                'total': 34,
-                'records':[
-                    {
-                        'date': '2023-1-23-12:12',
-                        'id': '1',
-                        'building': 'A楼',
-                        'equipment': 'Device230EF3',
-                        'x': -0.001,
-                        'y': 0.023,
-                        'z': 0.3,
-                    },
-                    {
-                        'date': '2023-1-23-12:12',
-                        'id': '1',
-                        'building': 'A楼',
-                        'equipment': 'Device230EF3',
-                        'x': -0.001,
-                        'y': 0.023,
-                        'z': 0.3,
-                    },
-                    {
-                        'date': '2023-1-23-12:12',
-                        'id': '1',
-                        'building': 'A楼',
-                        'equipment': 'Device230EF3',
-                        'x': -0.001,
-                        'y': 0.023,
-                        'z': 0.3,
-                    },
-                    {
-                        'date': '2023-1-23-12:12',
-                        'id': '1',
-                        'building': 'A楼',
-                        'equipment': 'Device230EF3',
-                        'x': -0.001,
-                        'y': 0.023,
-                        'z': 0.3,
-                    }
-                ]
+                'total': len(result),
+                'records': records,
             },status=status.HTTP_200_OK)
 
         except Exception as e:
