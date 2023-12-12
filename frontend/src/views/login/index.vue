@@ -1,7 +1,7 @@
 <!-- 登录页面 -->
 <template>
     <div class="page">
-    <div class="login-register">
+
     <div v-if="!userStore.isAuthenticated">
       <!-- 登录表单 -->
       <div v-if="showLoginForm">
@@ -52,7 +52,6 @@
           <p @click="toggleForm">已有账户？点击登录</p>
         </form>
         
-      </div>
     </div>
     <div v-else>
       <p>欢迎，{{ userStore.userInfo.email }}！</p>

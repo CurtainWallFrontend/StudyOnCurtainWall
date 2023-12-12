@@ -3,16 +3,16 @@
     <el-aside width=100%>
         <h2>LOGO</h2>
         <el-menu :default-active="defaultActive" router class = "menu" @select="handleSelect">
+            <el-menu-item index="dashboard">仪表盘</el-menu-item>
             <el-sub-menu index="dashboard">
                 <template #title>
                     <span style="color:rgb(204, 204, 204);">功能</span>
                 </template>
-                <el-menu-item index="dashboard">仪表盘</el-menu-item>
                 <el-menu-item index="segmentation">图像分割处理</el-menu-item>
                 <el-menu-item index="smoothness">玻璃平整度分析</el-menu-item>
                 <el-menu-item index="crack">裂缝和污渍识别</el-menu-item>
                 <el-menu-item index="explosion_identify">玻璃自爆识别</el-menu-item>
-                <el-menu-item index="vibration">风振数据显示</el-menu-item>
+                <el-menu-item index="vibration">风振数据</el-menu-item>
                 <a href = "http://120.46.136.85:8888/"><el-menu-item>3D模型</el-menu-item></a>
             </el-sub-menu>
             <el-sub-menu index="database">

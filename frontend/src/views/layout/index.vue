@@ -78,16 +78,16 @@ const updateLogic = () => {
     position: fixed;
     left:0%;
     top:0%;
-    width:15%;
+    width:18%;
     height:100%;
     background-color: rgb(0, 23, 52);
     color:white;
 }
 .func-zone{
     position: absolute;
-    left:15%;
+    left:18%;
     top:0%;
-    width:85%;
+    width:82%;
     height:100%;
 }
 </style>
