@@ -1,49 +1,61 @@
 <!-- 仪表盘页面 -->
 <template>
-  <div>
+  <div class="page">
+    <h1 class="hello">你好 👋🏻</h1>
+    <h2 class="dashboard">仪表盘</h2>
+    <h3 class="func">功能</h3>
+    
     <div class="board">
-        <el-row justify="center" style="margin-top: 65px;">
-          <el-col :span="8"><el-button style="width:300px;height:180px" @click="GoToSeg" >图像分割</el-button></el-col>
-          <el-col :span="8"><el-button style="width:300px;height:180px" @click="GoToExp" >玻璃内爆识别</el-button></el-col>
-          <el-col :span="8"><el-button style="width:300px;height:180px" @click="GoToCra" >裂缝和污渍识别</el-button></el-col>
+        <el-row justify="center">
+          <el-col :span="8"><el-button class="btn" @click="GoToSeg" >图像分割处理</el-button></el-col>
+          <el-col :span="8"><el-button class="btn" @click="GoToSmo" >玻璃平整度分析</el-button></el-col>
+          <el-col :span="8"><el-button class="btn" @click="GoToCra" >裂缝和污渍识别</el-button></el-col>
         </el-row>
         <el-row justify="center">
-          <el-col :span="8"><el-button style="width:300px;height:180px" @click="GoToVib">风振数据显示</el-button></el-col>
-          <el-col :span="8"><el-button style="width:300px;height:180px" @click="GoToMod">3D模型</el-button></el-col>
+          <el-col :span="8"><el-button class="btn" @click="GoToExp" >玻璃自爆识别</el-button></el-col>
+          <el-col :span="8"><el-button class="btn" @click="GoToMod">3D模型</el-button></el-col>
+          <el-col :span="8"><el-button class="btn" @click="GoToVib">风振数据</el-button></el-col>
           <el-col :span="8"></el-col>
         </el-row>
-       <!--el-row :gutter="18">
-          <el-col :span="15" :offset="1">
-            <div class="data-content bg-purple">
-              <div style="color:black">风振数据</div>
-            </div>
-            <div class="button-content bg-purple">
-              <el-row>
-                <el-col :span="12" style="margin-top: -10px;padding-left: 90px;">
-                  <div>
-                     <ImgUploader ref="ImgUploadRef" @uploadPicture ="upload" @onCancel="cancel"/>
-                  </div>
-                  <div class="result-container" v-if="ImgResult">
-                      <ImgList :data="ImgResult"/>
-                  </div>
-                </el-col>
-                <el-col :span="12" style="margin-top: 12px;padding-left: 50px;">
-                  <el-row><el-button style="width:200px" @click="GoToSeg" >图像分割</el-button></el-row>
-                  <el-row><el-button style="width:200px" @click="GoToExp">玻璃内爆识别</el-button></el-row>
-                  <el-row><el-button style="width:200px" @click="GoToCra">裂缝和污渍识别</el-button></el-row>
-                  <el-row><el-button style="width:200px" @click="GoToVib">风振数据显示</el-button></el-row>
-                  <el-row><el-button style="width:200px" @click="GoToMod">3D模型</el-button></el-row>
-                </el-col>
-              </el-row>
-            </div>
-          </el-col>
-          <el-col :span="7">
-            <div class="grid-content bg-purple">
-                <div style="color:black">3D模型</div>
-            </div>
-          </el-col>
-        </el-row-->
     </div>
+    
+    <h3 class="data">数据库</h3>
+    <el-column class="database">
+          <el-card class="card-item">
+            <div class="card-content">
+              <span>图像分割 幕墙结果</span>
+            </div>
+            <div class="card-footer">
+              <el-button type="primary" size="small">点击查看</el-button>
+            </div>
+          </el-card>
+
+          <el-card class="card-item">
+            <div class="card-content">
+              <span>风振异常数据</span>
+            </div>
+            <div class="card-footer">
+              <el-button type="primary" size="small">点击查看</el-button>
+            </div>
+          </el-card>
+
+          <el-card class="card-item">
+            <div class="card-content">
+              <span>玻璃自爆图像</span>
+            </div>
+            <div class="card-footer">
+              <el-button type="primary" size="small">点击查看</el-button>
+            </div>
+          </el-card>
+    </el-column>
+      <el-card  class="vib-card">
+        <img src="../../../assets/vib.png" class="image">
+        <div style="padding: 14px;">
+          <div class="bottom clearfix">
+            <el-button type="text" class="button" @click="navigateToVibration">点击进入</el-button>
+          </div>
+        </div>
+      </el-card>
   </div>
 </template>
 
@@ -56,6 +68,14 @@ import ImgUploader from '@/components/ImgUploader.vue'
 import ImgList from '@/components/ImgList.vue'
 import { UploadImg } from '@/api/public.js'
 
+const navigateToVibration = () => {
+    router.push({ 
+        name: 'layout', 
+        params:{ 
+            choice:'vibration_data' 
+        } 
+    })
+}
 const GoToSeg = () => {
     router.push({ 
         name: 'layout', 
@@ -85,6 +105,14 @@ const GoToVib = () => {
         name: 'layout', 
         params:{ 
             choice:'vibration' 
+        } 
+    })
+}
+const GoToSmo = () => {
+    router.push({ 
+        name: 'layout', 
+        params:{ 
+            choice:'smoothness' 
         } 
     })
 }
@@ -140,17 +168,53 @@ const cancel = () => {
 </script>
 
 <style scoped>
+.page{
+  background-color: #E8EFF6;
+  background-size: cover;
+  height: 100%;
+  width: 100%;
+}
+.hello {
+  position: absolute;
+  top:3%;
+  left:5%;
+  font-size: 14px; 
+  color: #8F92A1;
+}
+
+.dashboard{
+  position: absolute;
+  top:4%;
+  left:5%;
+  font-size: 24px; 
+}
+
+.func {
+  position: absolute;
+  top:12%;
+  left:2.2%;
+  font-size: 14px; 
+  color: #272835;
+}
 
 .board {
+  position: absolute;
+  top:16%;
+  left:1.5%;
   box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  padding: 0 30px; /* 给gutter留padding */
+  width: 95%;
+}
+
+.btn{
+  width:300px;
+  height:150px;
+  border-radius: 10px;
+  border-color: transparent;
 }
 
   .el-row {
-    margin-top: 60px;
-    margin-bottom: 60px;
+    margin-top: 10px;
+    margin-bottom: 10px;
     &:last-child {
       margin-bottom: 0;
     }
@@ -191,104 +255,75 @@ const cancel = () => {
     background-color: #f9fafc;
   }
 
-.el-button--seg.is-active,
-.el-button--seg:active {
-  background: #20B2AA;
-  border-color: #20B2AA;
-  color: #fff;
+.data {
+  position: absolute;
+  top:56%;
+  left:2.2%;
+  font-size: 14px; 
+  color: #272835;
 }
- 
-.el-button--seg:focus,
-.el-button--seg:hover {
-  background: #AE75E3;
-  border-color: #AE75E3;
-  color: #fff;
-}
- 
-.el-button--seg {
-  color: #FFF;
-  background-color: #a85bdb;
-  border-color: #a85bdb;
+.database {
+  position: absolute;
+  top:62%;
+  left:5%;
+  display: inline-block;
+  vertical-align: top;
 }
 
-.el-button--exp.is-active,
-.el-button--exp:active {
-  background: #20B2AA;
-  border-color: #20B2AA;
-  color: #fff;
-}
- 
-.el-button--:focus,
-.el-button--exp:hover {
-  background: #e37575;
-  border-color: #e37575;
-  color: #fff;
-}
- 
-.el-button--exp {
-  color: #FFF;
-  background-color: #db5b5b;
-  border-color: #db5b5b;
+.card-item {
+  text-align: left;
+  padding-left: 35px;
+  border-radius: 10px;
+  width: 400px;
+
+  margin-bottom: 10px;
 }
 
-.el-button--cra.is-active,
-.el-button--cra:active {
-  background: #20B2AA;
-  border-color: #20B2AA;
-  color: #fff;
+.image-col {
+  height: 85%;
+  display: flex;
+  align-items: stretch;
+} 
+
+.vib-card{
+  position:absolute;
+  top:62%;
+  left:45%;
+  border-radius: 10px;
+  width:585px;
+  height:275px;
 }
- 
-.el-button--:focus,
-.el-button--cra:hover {
-  background: #e3d275;
-  border-color: #e3d275;
-  color: #fff;
-}
- 
-.el-button--cra {
-  color: #FFF;
-  background-color: #dbce5b;
-  border-color: #dbce5b;
+.image {
+  width: 100%;
+  height: 100%;
 }
 
-.el-button--vib.is-active,
-.el-button--vib:active {
-  background: #20B2AA;
-  border-color: #20B2AA;
-  color: #fff;
-}
- 
-.el-button--:focus,
-.el-button--vib:hover {
-  background: #759de3;
-  border-color: #759de3;
-  color: #fff;
-}
- 
-.el-button--vib {
-  color: #FFF;
-  background-color: #5b84db;
-  border-color: #5b84db;
+.card-content{
+  font-size: 13px;
 }
 
-.el-button--mod.is-active,
-.el-button--mod:active {
-  background: #20B2AA;
-  border-color: #20B2AA;
-  color: #fff;
+.card-content,
+.card-footer {
+  display: flex;
+  align-items: center;
 }
- 
-.el-button--:focus,
-.el-button--mod:hover {
-  background: #75e3ae;
-  border-color: #75e3ae;
-  color: #fff;
+
+.card-footer {
+  justify-content: flex-end;
 }
- 
-.el-button--mod {
-  color: #FFF;
-  background-color: #5bdbc1;
-  border-color: #5bdbc1;
-}
+
+h3 {
+      font-size: 16px;
+      text-align: left;
+      margin-top: 5px;
+      
+      padding-left: 35px;
+    }
+hr {
+      margin-left: 10px;
+      color: rgba(183, 183, 183, 0.48); /* 设置分割线颜色为灰色 */
+      display: inline-block; /* 将分割线设置为内联块元素*/
+      width: 89%; /* 使分割线占满父元素的宽度 */
+    }
 
 </style>
