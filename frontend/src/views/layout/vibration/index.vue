@@ -22,6 +22,7 @@
     <h2 v-if="showAbnormal" style="margin:30px">4.异常值筛选结果</h2>
     <div v-if="showAbnormal">
         <el-button type="danger" style="margin-bottom: 20px" @click="dialogVisible = true">发送报告</el-button>
+        <el-button type="primary" style="margin-bottom: 20px" @click="saveDialogVisible = true">保存结果</el-button>
         <el-dialog
             v-model="dialogVisible"
             title="提示"
@@ -33,6 +34,22 @@
             <span class="dialog-footer">
                 <el-button @click="dialogVisible = false">取消</el-button>
                 <el-button type="primary" @click="sendMail">
+                    确定
+                </el-button>
+            </span>
+            </template>
+        </el-dialog>
+        <el-dialog
+            v-model="saveDialogVisible"
+            title="提示"
+            width="30%"
+            :before-close="handleClose"
+        >
+            <span>保存筛选的异常值数据到数据库？</span>
+            <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="saveDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="saveAbnormal">
                     确定
                 </el-button>
             </span>
@@ -51,6 +68,7 @@
 
     var chartData = ref();
     const dialogVisible = ref(false);
+    const saveDialogVisible = ref(false);
     let abnormalData;
 
     const range = ref([-0.5, 0.5])
@@ -252,6 +270,12 @@
         .catch(function (error) {
             console.log(error);
         })
+    }
+
+
+    //保存异常值筛选结果
+    const saveAbnormal = () =>{
+        console.log('saveAbnormalData')
     }
     
 

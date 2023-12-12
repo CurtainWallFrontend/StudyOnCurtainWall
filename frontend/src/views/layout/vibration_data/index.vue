@@ -91,88 +91,6 @@
     // 表格数据
     const tableData = ref()
 
-    // 暂时写死：后期存储到数据库中，可以由用户自行添加建筑、设备型号；
-    // 从后端获取这些数据或选择
-    // const options = ref([
-    //     {
-    //         'value': 'A楼',
-    //         'label': 'A楼',
-    //         'children':[
-    //             {
-    //                'value': 'A77C5238',
-    //                 'label': 'A77C5238',
-    //             },
-    //             {
-    //                 'value': 'F853ED49',
-    //                 'label': 'F853ED49',
-    //             },
-    //             {
-    //                 'value': '3326F78D',
-    //                 'label': '3326F78D',
-    //             },
-    //             {
-    //                 'value': '350E6EFF',
-    //                 'label': '350E6EFF',
-    //             },
-    //         ]
-    //     },
-    //     {
-    //         'value': '综合楼',
-    //         'label': '综合楼',
-    //         'children':[
-    //             {
-    //                 'value': 'E884C99D',
-    //                 'label': 'E884C99D',
-    //             },
-    //             {
-    //                 'value': '7749E4D9',
-    //                 'label': '7749E4D9',
-    //             },
-    //             {
-    //                 'value': '7A6BA8C8',
-    //                 'label': '7A6BA8C8',
-    //             },
-    //             {
-    //                 'value': '8850A7D7',
-    //                 'label': '8850A7D7',
-    //             },
-    //             {
-    //                 'value': '4787BE3A',
-    //                 'label': '4787BE3A',
-    //             },
-    //         ]
-    //     },
-    //     {
-    //         'value': '经管大楼',
-    //         'label': '经管大楼',
-    //         'children':[
-    //             {
-    //                 'value': '29FA1867',
-    //                 'label': '29FA1867',
-    //             },
-    //             {
-    //                 'value': '350E6EFF',
-    //                 'label': '350E6EFF',
-    //             },
-    //             {
-    //                 'value': '3326F78D',
-    //                 'label': '3326F78D',
-    //             },
-    //             {
-    //                 'value': 'A77C5238',
-    //                 'label': 'A77C5238',
-    //             },
-    //             {
-    //                 'value': 'E43AC643',
-    //                 'label': 'E43AC643',
-    //             },
-    //             {
-    //                 'value': '4787BE3A',
-    //                 'label': '4787BE3A',
-    //             },
-    //         ]
-    //     },
-    // ]);
 
     // 已选传感器信息
     const selectedInfo = ref({
@@ -211,7 +129,7 @@
 
 
     const change_select = () =>{
-        search();
+        // search();
     }
 
 
