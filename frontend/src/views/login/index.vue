@@ -4,7 +4,7 @@
       <!-- 登录表单 -->
       <div v-if="showLoginForm">
         <form @submit.prevent="login">
-          <el-form class="form">
+          <el-form class="form1">
             <h2>欢迎！请登录您的账户</h2>
             <el-form-item>
               <el-input v-model="loginForm.email" 
@@ -26,42 +26,64 @@
             <el-form-item>
                 <el-button @click="login">登录</el-button>
             </el-form-item>
-          </el-form>
-        </form>
-        <el-form class="register">
-          <el-form-item>
+          
+          <el-form-item style="position:absolute;top:80%">
             <p @click="toggleForm"
             style="color: rgb(193, 193, 193);
                  cursor: pointer;">没有账户？点击注册</p>
           </el-form-item>
         </el-form>
+        </form>
       </div>
       
       <!-- 注册表单 -->
       <div v-else>
-        <form @submit.prevent="register" class="register-form">
-          <h2>注册</h2>
-          <label for="email">邮箱:</label>
-          <el-input v-model="registerForm.email" required />
-          <div class="verification-code">
-            <label for="verificationCode">验证码:</label>
-            <el-input v-model="registerForm.code" required />
-            <button @click.prevent="sendVerificationCode" :disabled="disableButton" style="color: white;">
-              {{ buttonText }}
-            </button>
-          </div>
-          <div>
-            <label for="password">输入密码:</label>
-            <el-input v-model="registerForm.password" type="password" required />
-          </div>
-          <div>
-            <label for="confirmPassword">确认密码:</label>
-            <el-input v-model="registerForm.confirmPassword" type="password" required />
-          </div>
-          <button type="submit" style="color: white;">注册</button>
-          <p @click="toggleForm" 
-          style="color: rgb(193, 193, 193);
-                 cursor: pointer;">已有账户？点击登录</p>
+        <form @submit.prevent="register">
+          <el-form class="form2">
+            <h2>欢迎！请输入注册信息</h2>
+            <el-form-item>
+              <el-input v-model="registerForm.email" 
+              placeholder="邮箱" 
+              required 
+              ref="inputEmail"/>
+            </el-form-item>
+
+            <el-form-item>
+              <el-input v-model="registerForm.code" 
+              placeholder="验证码" 
+              required>
+              <template #suffix>
+                <button @click.prevent="sendVerificationCode" :disabled="disableButton" style="color: white;background-color: lightgrey;">{{ buttonText }}</button>
+              </template>
+            </el-input>
+            </el-form-item>
+
+            <el-form-item>
+              <el-input v-model="registerForm.password" 
+              type="password" 
+              placeholder="输入密码" 
+              required 
+              ref="inputPassword"/>
+            </el-form-item>
+
+            <el-form-item>
+              <el-input v-model="registerForm.confirmPassword" 
+              type="password" 
+              placeholder="确认密码" 
+              required 
+              ref="inputPassword"/>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button @click="register">注册</el-button>
+            </el-form-item>
+          
+          <el-form-item style="position:absolute;top:85%">
+            <p @click="toggleForm"
+            style="color: rgb(193, 193, 193);
+                 cursor: pointer;">已有账户？点此登录</p>
+          </el-form-item>
+        </el-form>
         </form>
     </div>
   <el-button @click="GoToLayout">点击跳转排版页面</el-button>
@@ -180,7 +202,7 @@ onMounted(() => {
   height: 100vh;
   width: 100vw;
 }
-.form{
+.form1{
   position: absolute;
   color: white;
   top: 35%;
@@ -192,21 +214,6 @@ onMounted(() => {
 
 .el-form-item + .el-form-item {
   margin-top: 20px; /* 设置间距大小 */
-}
-
-.button{
-  position: absolute;
-    top: 64%;
-    left: 79%;
-    height: 10%;
-    width: 14%;
-}
-.register{
-  position: absolute;
-    top: 62%;
-    left: 74%;
-    height: 10%;
-    width: 20%;
 }
 
 .el-input {
@@ -235,9 +242,13 @@ onMounted(() => {
   border-color: transparent;
 }
 
-.register-form{
-  position:absolute;
-  top:39%;
-  left:80%;
+.form2{
+  position: absolute;
+  color: white;
+  top: 25%;
+  left: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 </style>
