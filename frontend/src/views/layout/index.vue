@@ -1,12 +1,14 @@
 <!-- 排版页面 -->
 <template>
     <!-- 侧边栏区域begin -->
-    <div class = "menu">
-        <SideBar />
+    <div :class = "[{'menu': showSideBar}, { 'menu-none': !showSideBar} ]" 
+        @mouseenter="showSideBar = true" 
+        @mouseleave="showSideBar = false">
+        <SideBar class="SideBar" v-show="showSideBar"/>
     </div>
     <!-- 侧边栏区域end -->
     <!-- 右侧功能区域begin -->
-    <div class = "func-zone">
+    <div :class = "[{'func-zone': showSideBar}, {'func-zone-center': !showSideBar}]">
         <dashboard v-if="choice == 'dashboard'"/>
         <segmentation v-if="choice == 'segmentation'"/>
         <smoothness v-if="choice == 'smoothness'"/>
@@ -33,6 +35,8 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute();
 const choice = ref();//根据路由传值对应功能区的显示内容
+
+const showSideBar = ref(true);
 
 // 监听路由变化并执行不同逻辑
 onMounted(() => {
@@ -83,6 +87,15 @@ const updateLogic = () => {
     background-color: #00205B;
     color:white;
 }
+.menu-none{
+    position: fixed;
+    left:0%;
+    top:0%;
+    width:18%;
+    height:100%;
+    background-color: white;
+
+}
 .func-zone{
     position: absolute;
     left:18%;
@@ -90,4 +103,12 @@ const updateLogic = () => {
     width:82%;
     height:100%;
 }
+.func-zone-center{
+    position: absolute;
+    left:10%;
+    top:0%;
+    width:82%;
+    height:100%;
+}
+
 </style>
