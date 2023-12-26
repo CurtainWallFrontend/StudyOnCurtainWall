@@ -17,6 +17,7 @@
         <vibration v-if="choice == 'vibration'"/>
         <vibrationData v-if="choice == 'vibration_data'"/>
         <model v-if="choice == 'model'"/>
+        <personal v-if="choice == 'personal'"/>
     </div>
 </template>
 
@@ -31,6 +32,7 @@ import explosion_identify from '@/views/layout/explosion_identify/index.vue'
 import vibration from '@/views/layout/vibration/index.vue'
 import vibrationData from '@/views/layout//vibration_data/index.vue'
 import model from '@/views/layout/3Dmodel/index.vue'
+import personal from '@/views/layout/personal/index.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute();
@@ -72,6 +74,9 @@ const updateLogic = () => {
             break;
         case 'model':
             choice.value = 'model'
+            break;
+        case 'personal':
+            choice.value = 'personal'
             break;
   }
 }
