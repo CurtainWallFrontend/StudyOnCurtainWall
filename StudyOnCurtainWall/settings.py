@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+AUTH_USER_MODEL = 'Accounts.CustomUser'
 
 # Application definition
 
@@ -39,8 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
     'backend',
+    'Accounts',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -94,9 +103,24 @@ DATABASES = {
          'OPTIONS': {
            'charset': 'utf8mb4',
          },
+    },
+    'user': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'SEU2',
+        'USER': 'root', #用户
+        'PASSWORD': 'TJtj123123', #密码
+        'HOST': '1.117.76.28',  #看清楚是公网ip
+        'PORT': '3306',           # MySQL端口，默认为3306
     }
 }
 
+DATABASES_APPS_MAPPING = {
+    'backend': 'default',  # 数据库与APP应用一一对应
+    'Accounts': 'user',  # 数据库与APP应用一一对应
+}
+
+# 配置数据库的路由,里面的参数以.为分割，分别是Module文件夹名.数据库路由配置文件.数据库路由配置文件中的方法
+DATABASE_ROUTERS = ['StudyOnCurtainWall.database_app_router.DatabaseAppsRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -120,9 +144,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'zh-Hans'  # 改语言为中文
+TIME_ZONE = 'Asia/Shanghai'   # 改时区为上海
 
 USE_I18N = True
 
@@ -171,3 +194,6 @@ CORS_ALLOW_HEADERS = (
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
