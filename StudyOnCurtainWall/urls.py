@@ -20,11 +20,19 @@ from django.urls import include, path, re_path
 from django.views.static import serve
 from backend.views import register, validate, user_login
 
+from Accounts.authChange import update_user_permissions
+from Accounts.view2 import get_system_permissions
+from Accounts.views import register, validate, user_login
+from Accounts.returnID import get_current_user_email
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('backend/', include('backend.urls')),
     path('register', register, name='register'),
     path('validate', validate, name='validate'),
     path('login', user_login, name='login'),
+    path('show', get_system_permissions, name='get_system_permissions'),
+    path('update-permissions', update_user_permissions, name='update-permissions'),
+    path('get-email', get_current_user_email, name='get-current-user-email'),
     re_path(r'media/(?P<path>.*)', serve,{'document_root': settings.MEDIA_ROOT}),
 ]
