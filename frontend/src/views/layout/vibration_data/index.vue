@@ -35,8 +35,8 @@
                 style="width: 100%">
                 <el-table-column prop="time"  label="采集时间" width="200px"/>
                 <el-table-column prop="building" label="建筑" />
-                <el-table-column prop="equipment" label="传感器" />
-                <el-table-column prop="data" label="异常值"/>
+                <el-table-column prop="equipment" label="传感器" width="100px"/>
+                <el-table-column prop="data" label="异常值" width="100px"/>
                 <el-table-column prop="min" label="异常下限"/>
                 <el-table-column prop="max" label="异常上限"/>
                 <el-table-column prop="direction" label="方向" />
