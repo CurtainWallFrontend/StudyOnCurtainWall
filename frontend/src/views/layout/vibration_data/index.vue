@@ -1,10 +1,8 @@
 <template>
     <div v-loading="loading">
-        <el-button @click="GoToDash">进入仪表盘</el-button>
-
         <div v-if="true" style="width: 50%; margin: 30px auto;text-align: center;">
-            <h3>选择条件进行数据查找</h3>
-            <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules">
+            <h3 style="color:black;">选择条件进行数据查找</h3>
+            <el-form label-width="auto" ref="formRef" :model="selectedInfo" :rules="fileRules" :inline="true">
                 <!-- <el-form-item label="采集时间" prop="time">
                 <el-date-picker
                     v-model="selectedInfo.time"
@@ -14,7 +12,7 @@
                     end-placeholder="结束时间"
                 />
                 </el-form-item> -->
-                <el-form-item label="选择设备" prop="equipment">
+                <el-form-item label="选择设备" prop="equipment" >
                     <el-cascader v-model="selectedInfo.equipment" 
                         :options="options" 
                         placeholder="请选择建筑/传感器编号" 
@@ -27,7 +25,7 @@
             </el-form>
         </div>
 
-        <div style="width: 80%; margin: 30px auto;text-align: center;">
+        <div style="width: 80%; margin: 0px auto;text-align: center;">
             <el-table 
                 :data="tableData" 
                 :default-sort="{ prop: 'last_modified', order: 'descending' }"
@@ -51,7 +49,6 @@
             @current-change="handlePageChange" />
         </div>
 
-        <div id="main" style="width: 100%;height:500px;"></div>
     </div>
 
 </template>
@@ -89,7 +86,7 @@
     const formRef = ref(null);
 
     const currentPage = ref(1); 
-    const pageSize = ref(20);
+    const pageSize = ref(13);
     const total = ref(0);
 
     // 表格数据

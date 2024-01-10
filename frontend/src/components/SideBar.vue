@@ -10,9 +10,8 @@
                 <template #title>
                     <span style="color:rgb(204, 204, 204);">功能</span>
                 </template>
-                <a href = "http://43.142.78.122:5173/"><el-menu-item>图像分割处理</el-menu-item></a>
-                <el-menu-item index="smoothness">玻璃平整度分析</el-menu-item>
-                <!-- 王诗腾 -->
+                <a href = "http://43.142.78.122/#/layout/dashboard"><el-menu-item>图像分割处理</el-menu-item></a>
+                <a href = "http://pjh754.cn/"><el-menu-item index="smoothness">玻璃平整度分析</el-menu-item></a>
                 <el-menu-item index="crack">裂缝和污渍识别</el-menu-item>
                 <a href = "http://47.117.145.92/"><el-menu-item index="explosion_identify">玻璃内爆识别</el-menu-item></a>
                 <el-menu-item index="vibration">异常风振数据</el-menu-item>
