@@ -8,10 +8,13 @@ def sendemail(code, destination):
     # 1. 连接邮箱服务器
     con = smtplib.SMTP_SSL('smtp.tongji.edu.cn', 465)
 
-    sender_account = "2154177@tongji.edu.cn"                            # 填写个人账户的相应信息
-    sender_account_passcode = "342838221Hyh"
+    sender_account = "2151133@tongji.edu.cn"  # ！！！请不要一直使用同一个邮箱
+                                              #  你要用验证码就请填写个人账户的相应信息 要不然我的邮箱会爆
+    sender_account_passcode = "0929Sunhanya"
+
     # 2. 登录邮箱
     con.login(sender_account, sender_account_passcode)
+
 
     # 2. 准备数据
     # 创建邮件对象
@@ -37,4 +40,4 @@ def sendemail(code, destination):
 
 
 if __name__ == "__main__":
-    sendemail("4578", "1796954825@qq.com")
+    sendemail("4578", "1296534587@qq.com")

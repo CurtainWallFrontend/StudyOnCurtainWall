@@ -95,7 +95,7 @@ DATABASES = {
     # },
     'default':{
          'ENGINE': 'django.db.backends.mysql', #Mysql引擎
-         'NAME': 'mydb', # 数据库名，不需要路径以及后缀的  
+         'NAME': 'data', # 数据库名，不需要路径以及后缀的  
          'USER': 'root', #用户
          'PASSWORD': 'TJtj123123', #密码
          'HOST': '1.117.76.28',  #看清楚是公网ip
@@ -104,23 +104,32 @@ DATABASES = {
            'charset': 'utf8mb4',
          },
     },
-    'user': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'SEU2',
-        'USER': 'root', #用户
-        'PASSWORD': 'TJtj123123', #密码
-        'HOST': '1.117.76.28',  #看清楚是公网ip
-        'PORT': '3306',           # MySQL端口，默认为3306
-    }
+    # 'user': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'mydb', # 数据库名，不需要路径以及后缀的  
+    #      'USER': 'root', #用户
+    #      'PASSWORD': 'TJtj123123', #密码
+    #      'HOST': '1.117.76.28',  #看清楚是公网ip
+    #      'PORT': '3306', # Set to empty string for default.
+    #      'OPTIONS': {
+    #        'charset': 'utf8mb4',
+    #      },
+    #     # 先设置同一个数据库
+    #     # 'NAME': 'SEU2',
+    #     # 'USER': 'root', #用户
+    #     # 'PASSWORD': 'TJtj123123', #密码
+    #     # 'HOST': '1.117.76.28',  #看清楚是公网ip
+    #     # 'PORT': '3306',           # MySQL端口，默认为3306
+    # }
 }
 
-DATABASES_APPS_MAPPING = {
-    'backend': 'default',  # 数据库与APP应用一一对应
-    'Accounts': 'user',  # 数据库与APP应用一一对应
-}
+# DATABASES_APPS_MAPPING = {
+#     'backend': 'default',  # 数据库与APP应用一一对应
+#     'Accounts': 'user',  # 数据库与APP应用一一对应
+# }
 
 # 配置数据库的路由,里面的参数以.为分割，分别是Module文件夹名.数据库路由配置文件.数据库路由配置文件中的方法
-DATABASE_ROUTERS = ['StudyOnCurtainWall.database_app_router.DatabaseAppsRouter']
+# DATABASE_ROUTERS = ['StudyOnCurtainWall.database_app_router.DatabaseAppsRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -196,4 +205,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+# DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
