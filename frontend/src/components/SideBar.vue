@@ -1,7 +1,7 @@
 <!-- 侧边栏页面 -->
 <template>
-    <el-aside width=100%>
-        <h2>LOGO</h2>
+    <el-aside class="side" width=100%>
+        <h2 class="logo">LOGO</h2>
         <el-menu :default-active="defaultActive" router class = "menu" @select="handleSelect">
             <el-menu-item index="dashboard" style="color:rgb(226, 226, 226);">
               仪表盘
@@ -70,6 +70,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 .menu {
   position: absolute;
   top: 10%;
@@ -93,5 +94,11 @@ onMounted(() => {
 .el-menu-item.is-active {
   color: white !important;
   background: black !important;
+}
+
+.logo {
+  position: fixed;
+  top:0;
+  left:70px;
 }
 </style>

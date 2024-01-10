@@ -30,6 +30,8 @@ class DeviceAPI(GenericViewSet):
     serializer_class = ImageSerializer
     queryset = Device.objects.all()
 
+
+    # 获取设备
     @action(methods=['get'], detail=False)
     def get_device(self, request):
         devices = self.get_queryset()
@@ -58,6 +60,8 @@ class DeviceAPI(GenericViewSet):
             'options': result,
         },status=status.HTTP_200_OK)
 
+
+    # 添加设备
     @action(methods=['get'], detail=False)
     def add_device(self,request):
 
@@ -75,7 +79,9 @@ class DeviceAPI(GenericViewSet):
             'building':device.building.building_name,
         }
         return Response(response,status=status.HTTP_200_OK)
+    
 
+    # 删除设备
     @action(methods=['get'],detail=False)
     def delete_device(self,request):
         device = get_object_or_404(Device, pk='12')
@@ -83,6 +89,7 @@ class DeviceAPI(GenericViewSet):
         return Response({
             'message':'device deleted successfully'
         },status=status.HTTP_200_OK)
+
 
 class GetImg(GenericViewSet):
     serializer_class = ImageSerializer
@@ -286,6 +293,7 @@ class VibrationData(GenericViewSet):
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
     @action(methods=['post'], detail=False)
     def filter_outlier(self,request):
         file_path = os.path.join('./backend/media/','vibration/')
@@ -327,6 +335,7 @@ class VibrationData(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
     #保存异常值
     @action(methods=['post'], detail=False)
