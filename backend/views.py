@@ -432,7 +432,7 @@ class VibrationData(GenericViewSet):
     # 获取前三条异常值
     @action(methods=['get'], detail=False)
     def get_abnormal(self, request):
-        abnormal_data = Abnormal.objects.all()[:3]  # 获取 abnormal 表的前三条数据
+        abnormal_data = Abnormal.objects.all()[:100]  # 获取 abnormal 表的前100条数据
         data = serializers.serialize('json', abnormal_data)  # 将查询结果序列化为 JSON 格式的字符串
         return JsonResponse(data, safe=False)  # 返回 JSON 数据
 
