@@ -29,7 +29,7 @@ db_user = 'root'
 db_password = 'TJtj123123'
 db_host = '1.117.76.28'
 db_port = 3306
-database = 'mydb'
+database = 'data'
 
 # 提取device_id和device_name到一个列表中
 device_list = []
