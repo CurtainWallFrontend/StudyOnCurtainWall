@@ -26,7 +26,7 @@
           <span style="font-weight: bold;font-size: 13px;">风振异常数据</span>
         </div>
         <div v-if="abnormalData && abnormalData.length">
-          <span style="font-size: 11px;color: #727272;">{{ abnormalData[0].pk }}</span>
+          <span style="font-size: 11px;color: #727272;">{{ abnormalData[99].fields.last_modified }}</span>
         </div>
         <el-button class="button0" type="primary" size="small" @click="navigateToVibration">点击查看</el-button>
       </el-card>
@@ -36,7 +36,7 @@
           <span style="font-weight: bold;font-size: 13px;">风振异常数据</span>
         </div>
         <div v-if="abnormalData && abnormalData.length">
-          <span style="font-size: 11px;color: #727272;">{{ abnormalData[1].pk }}</span>
+          <span style="font-size: 11px;color: #727272;">{{ abnormalData[50].fields.last_modified }}</span>
         </div>
         <el-button class="button1" type="primary" size="small" @click="navigateToVibration">点击查看</el-button>
       </el-card>
@@ -46,7 +46,7 @@
           <span style="font-weight: bold;font-size: 13px;">风振异常数据</span>
         </div>
         <div v-if="abnormalData && abnormalData.length">
-          <span style="font-size: 11px;color: #727272;">{{ abnormalData[2].pk }}</span>
+          <span style="font-size: 11px;color: #727272;">{{ abnormalData[0].fields.last_modified }}</span>
         </div>
         <el-button class="button2" type="primary" size="small" @click="navigateToVibration">点击查看</el-button>
       </el-card>
