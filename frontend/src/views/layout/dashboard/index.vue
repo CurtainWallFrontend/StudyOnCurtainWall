@@ -324,7 +324,7 @@ const cancel = () => {
 .vib-card {
   position: absolute;
   top: 62%;
-  left: 45%;
+  right: 8%;
   border-radius: 10px;
   width: 585px;
   height: 275px;
