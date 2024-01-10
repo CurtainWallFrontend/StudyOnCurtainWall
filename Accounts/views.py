@@ -33,7 +33,7 @@ def register(request):
 
         # 生成验证码并发送
         code = get_random_string(length=4, allowed_chars='0123456789')
-        sendemail(code, email)
+        sendemail(code, email) #出错点
         validate_data[email] = code
         return JsonResponse({'message': '验证码已发送，请检查您的邮箱'})
 
@@ -44,14 +44,14 @@ def register(request):
 def validate(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        email = data.get('email')
+        email = data.get('email')     
         password = data.get('password')
         code = data.get('code')
 
         # 检查验证码
         if email in validate_data and validate_data[email] == code:
             # 创建新用户
-            user = CustomUser.objects.create_user(username=email, email=email, password=password)
+            user = CustomUser.objects.create_user(username = email, email = email, password = password)
             user.save()
             return JsonResponse({'message': '注册成功'})
 
@@ -64,7 +64,10 @@ def validate(request):
 def user_login(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
+        print(request.body)
+        print(data)
         form = AuthenticationForm(request, data)
+
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -86,7 +89,8 @@ def user_login(request):
                 })
             else:
                 return JsonResponse({'error1': 'Invalid username or password.'}, status=400)
-        else:
+        else:        
+            return JsonResponse({'error2':str(form.cleaned_data)}, status=400)
             return JsonResponse({'error2': 'Invalid form data.'}, status=400)
     else:
         form = AuthenticationForm()

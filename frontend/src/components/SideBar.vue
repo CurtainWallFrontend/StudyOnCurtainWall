@@ -33,11 +33,30 @@
   
 
 <script setup>
+import { useUserStore } from '@/api/user';
 import router from "@/router/index.js"
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from "vue-router";
 
 const defaultActive = ref('dashboard')
+const userStore = useUserStore();
+const userEmail = ref();
+
+const get_Email = async () => {
+  var popup = window.open("http://47.117.145.92/");
+  if (popup) {
+    const user = {
+      'email':userEmail,
+    }
+    const success = await userStore.sendVerificationCode(registerForm.value.email);
+    setTimeout(function () {
+      var data = {
+        email: userEmail
+      };
+      popup.postMessage(JSON.stringify(data), "http://47.117.145.92/");
+    }, 500);
+  }
+}
 
 const handleSelect = (index) => {
   localStorage.setItem('lastActiveMenuItem', index);
@@ -51,26 +70,28 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.menu{
-    position:absolute;
-    top:10%;
-    left:0%;
-    width:100%;
-    background-color: #2a3f75;
+.menu {
+  position: absolute;
+  top: 10%;
+  left: 0%;
+  width: 100%;
+  background-color: #2a3f75;
 }
+
 .el-sub-menu .el-menu-item {
   background-color: #506baf !important;
-  color:rgb(204, 204, 204);
+  color: rgb(204, 204, 204);
 }
 
 /* 设置选鼠标指针浮动在一级菜单的设置 */
-.el-menu-item:hover{
-  background-color: rgb(235, 235, 235) !important;;
+.el-menu-item:hover {
+  background-color: rgb(235, 235, 235) !important;
+  ;
 }
-/* 设置当前被选中的一级菜单 */
-.el-menu-item.is-active {  
-  color: white !important;  
-  background: black !important;  
-}  
 
+/* 设置当前被选中的一级菜单 */
+.el-menu-item.is-active {
+  color: white !important;
+  background: black !important;
+}
 </style>

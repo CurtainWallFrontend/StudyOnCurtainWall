@@ -12,3 +12,6 @@ class CustomUser(AbstractUser):
     access_system_d = models.BooleanField(default=False)
     access_system_e = models.BooleanField(default=False)
     access_system_f = models.BooleanField(default=False)
+    
+    class Meta:
+        app_label = 'Accounts'

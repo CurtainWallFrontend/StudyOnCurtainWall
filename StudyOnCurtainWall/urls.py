@@ -18,12 +18,11 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path, re_path
 from django.views.static import serve
-from backend.views import register, validate, user_login
 
 from Accounts.authChange import update_user_permissions
 from Accounts.view2 import get_system_permissions
 from Accounts.views import register, validate, user_login
-from Accounts.returnID import get_current_user_email
+from Accounts.returnEmail import get_current_user_email
 
 urlpatterns = [
     path('admin/', admin.site.urls),
