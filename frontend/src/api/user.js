@@ -9,7 +9,7 @@ export const useUserStore = defineStore('user', () => {
 
     const login = async (email, password) => {
         try {
-            const response = await Request.post('/login', { "username":email, "password":password });
+            const response = await Request.post('/login', { "username": email, "password": password });
             if (response.status === 200) {
                 userInfo.value = response.data;
                 return true;
@@ -55,17 +55,18 @@ export const useUserStore = defineStore('user', () => {
 
     const getCurrentInfo = async (user) => {
         try {
-            const response = await Request.post('/get-info', { "user": user });
+            const headers = { 'Authorization': `Token ${user}` };
+            const response = await Request.get('/get-info', { headers });
             if (response.status === 200) {
                 Message.success(response.data.message);
-                return true;
+                return response.data.data;
             } else {
                 console.error(response);
-                return false;
+                return response.data;
             }
         } catch (error) {
             Message.error(error.message);
-            return false;
+            return response.data;
         }
     };
 
@@ -79,7 +80,8 @@ export const useUserStore = defineStore('user', () => {
         sendVerificationCode,
         login,
         register,
-        clearUserInfo
+        clearUserInfo,
+        getCurrentInfo
     };
 }, {
     persist: true,

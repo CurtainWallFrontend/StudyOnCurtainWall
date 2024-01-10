@@ -91,17 +91,16 @@ const updateLogic = () => {
     height: 100%;
     background-color: #00205B;
     color: white;
-    transition: all 0.3s ease-in-out;
 }
 
 .menu-none {
     position: fixed;
     left: 0%;
     top: 0%;
+    width: 3%;
     height: 100%;
+    z-index:99;
     background-color: #E8EFF6;
-    overflow: hidden;
-    transition: all 0.2s ease-in-out;
 }
 
 .func-zone {
