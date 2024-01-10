@@ -64,8 +64,6 @@ def validate(request):
 def user_login(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
-        print(request.body)
-        print(data)
         form = AuthenticationForm(request, data)
 
         if form.is_valid():

@@ -57,7 +57,6 @@ import { Plus } from '@element-plus/icons-vue'
 import { useUserStore } from '@/api/user';
 import { onMounted,ref } from 'vue'
 
-import axios from 'axios'
 import router from "@/router/index.js"
 import Message from "@/utils/Message.js"
 import ImgUploader from '@/components/ImgUploader.vue'
