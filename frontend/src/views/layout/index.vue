@@ -10,7 +10,6 @@
         <!-- 侧边栏区域end -->
     </div>
 
-
     <!-- 右侧功能区域begin -->
     <div :class="[{ 'func-zone': showSideBar }, { 'func-zone-center': !showSideBar }]">
         <dashboard v-if="choice == 'dashboard'" />
@@ -128,28 +127,29 @@ const updateLogic = () => {
 }
 
 .showMenu {
+    color:#00205B;
     font-size: 24px; /* 改变图标大小 */
-    margin-left: 10px;
-    margin-top: 10px;
+    left: 10px;
+    top: 25px;
 }
 
 .showMenu:hover {
     font-size: 24px; /* 改变图标大小 */
-    margin-left: 10px;
-    margin-top: 10px;
+    left: 10px;
+    top: 25px;
     opacity: 0.7;
 }
 
 .hideMenu {
-    font-size: 18px; /* 改变图标大小 */
+    font-size: 24px; /* 改变图标大小 */
     left: 92px;
-    top: 6px;
+    top: 25px;
 }
 
 .hideMenu:hover {
-    font-size: 18px; /* 改变图标大小 */
+    font-size: 24px; /* 改变图标大小 */
     left: 92px;
-    top: 6px;
+    top: 25px;
     opacity: 0.8;
 }
 </style>
