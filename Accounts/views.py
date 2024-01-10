@@ -88,7 +88,6 @@ def user_login(request):
             else:
                 return JsonResponse({'error1': 'Invalid username or password.'}, status=400)
         else:        
-            return JsonResponse({'error2':str(form.cleaned_data)}, status=400)
             return JsonResponse({'error2': 'Invalid form data.'}, status=400)
     else:
         form = AuthenticationForm()

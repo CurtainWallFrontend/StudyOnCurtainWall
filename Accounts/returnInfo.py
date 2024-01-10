@@ -6,17 +6,26 @@ from .models import CustomUser
 from django.http import JsonResponse
 import json
 
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def get_current_user_email(request):
+    user = request.user
+    return Response({'email': user.email})
+
 
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def get_current_user_info(request):
     user = request.user
-    if CustomUser.objects.filter(email=user.email).exists():
+    user_obj = CustomUser.objects.get(email=user)
+
+    if user_obj:
         Info = {
-            'id': user.id,
+            'id': user_obj.id,
             'email': user.email,
-            'username': user.username,
+            'username': user_obj.username,
         }
         return JsonResponse({'message': '成功返回信息',
                             'data': Info })
