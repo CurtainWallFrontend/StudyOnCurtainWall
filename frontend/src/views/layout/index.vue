@@ -83,37 +83,42 @@ const updateLogic = () => {
 </script>
 
 <style scoped>
-.menu{
+.menu {
     position: fixed;
-    left:0%;
-    top:0%;
-    width:18%;
-    height:100%;
+    left: 0%;
+    top: 0%;
+    width: 18%;
+    height: 100%;
     background-color: #00205B;
-    color:white;
+    color: white;
+    transition: all 0.3s ease-in-out;
 }
-.menu-none{
+
+.menu-none {
     position: fixed;
-    left:0%;
-    top:0%;
-    width:18%;
-    height:100%;
-    background-color: white;
-
-}
-.func-zone{
-    position: absolute;
-    left:18%;
-    top:0%;
-    width:82%;
-    height:100%;
-}
-.func-zone-center{
-    position: absolute;
-    left:10%;
-    top:0%;
-    width:82%;
-    height:100%;
+    left: 0%;
+    top: 0%;
+    height: 100%;
+    background-color: #E8EFF6;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
 }
 
+.func-zone {
+    position: absolute;
+    left: 18%;
+    top: 0%;
+    width: 82%;
+    height: 100%;
+    background-color: #E8EFF6;
+}
+
+.func-zone-center {
+    position: absolute;
+    left: 0%;
+    top: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: #E8EFF6;
+}
 </style>

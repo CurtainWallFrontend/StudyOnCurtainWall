@@ -22,7 +22,7 @@ from django.views.static import serve
 from Accounts.authChange import update_user_permissions
 from Accounts.view2 import get_system_permissions
 from Accounts.views import register, validate, user_login
-from Accounts.returnEmail import get_current_user_email
+from Accounts.returnEmail import get_current_user_info
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,6 +32,6 @@ urlpatterns = [
     path('login', user_login, name='login'),
     path('show', get_system_permissions, name='get_system_permissions'),
     path('update-permissions', update_user_permissions, name='update-permissions'),
-    path('get-email', get_current_user_email, name='get-current-user-email'),
+    path('get-info', get_current_user_info, name='get-current-user-email'),
     re_path(r'media/(?P<path>.*)', serve,{'document_root': settings.MEDIA_ROOT}),
 ]

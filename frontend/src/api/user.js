@@ -9,7 +9,6 @@ export const useUserStore = defineStore('user', () => {
 
     const login = async (email, password) => {
         try {
-            console.log("Call login！！！")
             const response = await Request.post('/login', { "username":email, "password":password });
             if (response.status === 200) {
                 userInfo.value = response.data;
@@ -54,9 +53,9 @@ export const useUserStore = defineStore('user', () => {
         }
     };
 
-    const getCurrentEmail = async (user) => {
+    const getCurrentInfo = async (user) => {
         try {
-            const response = await Request.post('/get-email', { "user": user });
+            const response = await Request.post('/get-info', { "user": user });
             if (response.status === 200) {
                 Message.success(response.data.message);
                 return true;
