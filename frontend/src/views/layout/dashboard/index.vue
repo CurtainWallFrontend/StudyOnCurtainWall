@@ -207,6 +207,7 @@ const cancel = () => {
   top: 4%;
   left: 5%;
   font-size: 24px;
+  color:black;
 }
 
 .func {

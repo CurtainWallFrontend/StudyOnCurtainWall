@@ -1,8 +1,7 @@
 <!-- 裂缝和污渍识别页面 -->
 <template>
     <div>
-      <div>这是裂缝和污渍识别页面</div>
-      <el-button @click="GoToDash">进入仪表盘</el-button>
+
       <!--div>
           <ImgUploader ref="ImgUploadRef" @uploadPicture ="upload" @onCancel="cancel"/>
       </div>

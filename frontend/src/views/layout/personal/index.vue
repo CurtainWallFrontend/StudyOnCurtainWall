@@ -20,7 +20,7 @@
                 <img w-full :src="dialogImageUrl" alt="Preview Image" class="picture" />
               </div>
             </el-dialog>
-            <el-button type="primary" class="btn">退出登录</el-button>
+            <el-button type="primary" class="btn" @click = Logout>退出登录</el-button>
           </el-row>
 
         </el-col>
@@ -64,6 +64,7 @@ import { ElMessage, ElUpload, ElIcon, ElButton, ElDialog, ElRow } from 'element-
 import { Plus } from '@element-plus/icons-vue'
 import { useUserStore } from '@/api/user';
 import { onMounted, ref } from 'vue'
+import store from '@/store/index.js'
 
 import router from "@/router/index.js"
 import Message from "@/utils/Message.js"
@@ -74,22 +75,12 @@ import { UploadImg } from '@/api/public.js'
 const userStore = useUserStore();
 
 const personInfo = ref({
-  name: '',
-  email: '',
+  name: store.state.username,
+  email: store.state.email,
   phone: '1919810',
   company: '同济大学',
   other: 'xxxxxxxx',
 });
-
-const user = JSON.parse(localStorage.getItem('user')).userInfo.token;
-
-const getInfo = async () => {
-  const result = await userStore.getCurrentInfo(user);
-
-  personInfo.value.name = result.username;
-  personInfo.value.email = result.email;
-}
-getInfo();
 
 const handleRemove = () => {
 
@@ -101,9 +92,14 @@ const handleChange = () => {
   
 }
 
-onMounted(() => {
-  userStore.clearUserInfo()
-});
+const Logout = () => {
+  userStore.clearUserInfo();
+  router.push({ name: 'login' });
+}
+
+// onMounted(() => {
+//   userStore.clearUserInfo()
+// });
 
 </script>
 

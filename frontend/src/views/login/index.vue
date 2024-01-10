@@ -73,6 +73,7 @@
 <script setup>
 import { useUserStore } from '@/api/user';
 import { onMounted, ref } from 'vue'
+import store from '@/store/index.js'
 import router from "@/router/index.js"
 
 const GoToLayout = () => {
@@ -107,6 +108,12 @@ const focusNextInput = () => {
 const login = async () => {
   const loginSuccess = await userStore.login(loginForm.value.email, loginForm.value.password);
   if (loginSuccess) {
+    const user = JSON.parse(localStorage.getItem('user')).userInfo.token;
+    const result = await userStore.getCurrentInfo(user);
+    // 触发 mutation 更新 store 中的数据
+    store.commit('SET_USERNAME', result.username);
+    store.commit('SET_EMAIL', result.email);
+
     router.push({ name: 'layout', params: { choice: 'dashboard' } });
   } else {
     console.error(error.message);
@@ -154,7 +161,7 @@ const register = async () => {
   // 实现注册逻辑
   const success = await userStore.register(registerForm.value.email, registerForm.value.code, registerForm.value.password);
 
-  if(success){
+  if (success) {
     toggleForm;
   }
 };
@@ -230,13 +237,13 @@ onMounted(() => {
 }
 
 
-.el-button:hover{
+.el-button:hover {
   background-color: rgb(6, 6, 117);
   color: white;
   border-color: transparent;
 }
 
-.form2{
+.form2 {
   position: absolute;
   color: white;
   top: 25%;

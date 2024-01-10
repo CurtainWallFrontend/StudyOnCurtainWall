@@ -1,16 +1,15 @@
 <template>
-    <!-- <el-button @click="GoToDash">进入仪表盘</el-button> -->
-
     <div>
-        <h2>1.请上传振动数据文件（csv）</h2>
+        <h2 style="color:black;">1.请上传振动数据文件（csv）</h2>
         <input type="file" ref="fileInput"  accept=".csv" @change="handleFileInputChange" />
-        <button @click="uploadFile" :disabled="!selectedFile">上传文件</button>
+        <button @click="uploadFile" :disabled="!selectedFile" 
+        style="background-color:white;color:black;">上传文件</button>
     </div>
 
-    <h2 v-if="showNormal" style="margin:30px">2.风震图显示</h2>
+    <h2 v-if="showNormal" style="margin:30px;color:black;">2.风震图显示</h2>
     <div id="main" style="width: 100%;height:500px;"></div>
 
-    <h2 v-if="showNormal" style="margin:30px">3.请选择异常阈值</h2>
+    <h2 v-if="showNormal" style="margin:30px;color:black;">3.请选择异常阈值</h2>
     <div v-if="showNormal" class="slider-block" style="width: 400px;">
         <el-slider v-model="range" range step="0.1" :min="-5" :max="5"  range-start-label range-end-label/>
         <div>异常值上下限：【{{ range[0] }}，{{ range[1] }}】</div>
@@ -19,7 +18,7 @@
         </div>
     </div>
 
-    <h2 v-if="showAbnormal" style="margin:30px">4.异常值筛选结果</h2>
+    <h2 v-if="showAbnormal" style="margin:30px;color:black;">4.异常值筛选结果</h2>
     <div v-if="showAbnormal">
         <el-button type="danger" style="margin-bottom: 20px" @click="dialogVisible = true">发送报告</el-button>
         <el-button type="primary" style="margin-bottom: 20px" @click="saveDialogVisible = true">保存结果</el-button>

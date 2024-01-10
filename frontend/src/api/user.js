@@ -1,6 +1,7 @@
 // 管理用户数据
 import { defineStore } from "pinia"
 import { ref } from "vue"
+import store from '@/store/index.js'
 import Request from "@/utils/Request.js";  // 在每个 api 文件里都要引入这两个文件
 import Message from "@/utils/Message.js"  // 在每个 api 文件里都要引入这两个文件
 
@@ -58,7 +59,7 @@ export const useUserStore = defineStore('user', () => {
             const headers = { 'Authorization': `Token ${user}` };
             const response = await Request.get('/get-info', { headers });
             if (response.status === 200) {
-                Message.success(response.data.message);
+                // Message.success(response.data.message);
                 return response.data.data;
             } else {
                 console.error(response);
@@ -73,6 +74,7 @@ export const useUserStore = defineStore('user', () => {
     // 退出时清除用户信息
     const clearUserInfo = () => {
         userInfo.value = {};
+        store.dispatch('doLogout');
     };
 
     return {
