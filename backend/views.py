@@ -8,6 +8,7 @@ from backend.models import *
 from rest_framework import status
 from backend.serializers import ImageSerializer
 from django.core.files.storage import FileSystemStorage
+from django.core import serializers
 from django.http import JsonResponse
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -426,6 +427,14 @@ class VibrationData(GenericViewSet):
             print(e)
             # 处理异常情况
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+    # 获取前三条异常值
+    @action(methods=['get'], detail=False)
+    def get_abnormal(self, request):
+        abnormal_data = Abnormal.objects.all()[:3]  # 获取 abnormal 表的前三条数据
+        data = serializers.serialize('json', abnormal_data)  # 将查询结果序列化为 JSON 格式的字符串
+        return JsonResponse(data, safe=False)  # 返回 JSON 数据
 
 
 

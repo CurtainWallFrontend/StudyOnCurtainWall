@@ -17,5 +17,6 @@ urlpatterns = [
     path('vibration/getDevice/',DeviceAPI.as_view({'get':'get_device'})),
     path('vibration/addDevice/', DeviceAPI.as_view({'get': 'add_device'})),
     path('vibration/deleteDevice/', DeviceAPI.as_view({'get': 'delete_device'})),
-    path('vibration/saveAbnormal/', VibrationData.as_view({'post': 'save_abnormal'}))
+    path('vibration/saveAbnormal/', VibrationData.as_view({'post': 'save_abnormal'})),
+    path('vibration/getAbnormal/', VibrationData.as_view({'get': 'get_abnormal'}))
 ]

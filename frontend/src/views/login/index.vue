@@ -242,6 +242,12 @@ onMounted(() => {
   border-color: transparent;
 }
 
+.el-button:hover{
+  background-color: rgb(6, 6, 117);
+  color: white;
+  border-color: transparent;
+}
+
 .form2{
   position: absolute;
   color: white;

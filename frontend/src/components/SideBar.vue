@@ -22,7 +22,6 @@
                 <template #title>
                     <span style="color:rgb(204, 204, 204);">数据库</span>
                 </template>
-                <el-menu-item index="pics">保存的图片</el-menu-item>
                 <el-menu-item index="vibration_data">风振数据</el-menu-item>
             </el-sub-menu>
             <el-menu-item index="personal" style="color:rgb(226, 226, 226);">
