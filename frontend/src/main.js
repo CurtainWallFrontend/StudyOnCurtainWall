@@ -8,8 +8,12 @@ import store from './store'// 导入vuex文件
 import * as echarts from 'echarts';// 导入echarts文件
 import { createPinia } from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 const app = createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
 app.use(ElementPlus)
 app.use(router)
 app.use(store)

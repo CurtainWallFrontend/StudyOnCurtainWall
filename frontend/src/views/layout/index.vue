@@ -1,28 +1,32 @@
 <!-- 排版页面 -->
 <template>
-    <!-- 侧边栏区域begin -->
-    <div :class = "[{'menu': showSideBar}, { 'menu-none': !showSideBar} ]" 
-        @mouseenter="showSideBar = true" 
-        @mouseleave="showSideBar = false">
-        <SideBar class="SideBar" v-show="showSideBar"/>
+    <div>
+        <!-- 侧边栏区域begin -->
+        <div :class="[{ 'menu': showSideBar }, { 'menu-none': !showSideBar }]">
+            <el-icon @click="showSideBar = true" v-show="!showSideBar" class="showMenu"><Expand /></el-icon>
+            <el-icon @click="showSideBar = false" v-show="showSideBar" class="hideMenu"><Fold /></el-icon>
+            <SideBar class="SideBar" v-show="showSideBar" />
+        </div>
+        <!-- 侧边栏区域end -->
     </div>
-    <!-- 侧边栏区域end -->
+
+
     <!-- 右侧功能区域begin -->
-    <div :class = "[{'func-zone': showSideBar}, {'func-zone-center': !showSideBar}]">
-        <dashboard v-if="choice == 'dashboard'"/>
-        <segmentation v-if="choice == 'segmentation'"/>
-        <smoothness v-if="choice == 'smoothness'"/>
-        <crack v-if="choice == 'crack'"/>
-        <explosion_identify v-if="choice == 'explosion_identify'"/>
-        <vibration v-if="choice == 'vibration'"/>
-        <vibrationData v-if="choice == 'vibration_data'"/>
-        <model v-if="choice == 'model'"/>
-        <personal v-if="choice == 'personal'"/>
+    <div :class="[{ 'func-zone': showSideBar }, { 'func-zone-center': !showSideBar }]">
+        <dashboard v-if="choice == 'dashboard'" />
+        <segmentation v-if="choice == 'segmentation'" />
+        <smoothness v-if="choice == 'smoothness'" />
+        <crack v-if="choice == 'crack'" />
+        <explosion_identify v-if="choice == 'explosion_identify'" />
+        <vibration v-if="choice == 'vibration'" />
+        <vibrationData v-if="choice == 'vibration_data'" />
+        <model v-if="choice == 'model'" />
+        <personal v-if="choice == 'personal'" />
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onUpdated, computed} from 'vue'
+import { ref, reactive, onMounted, onUpdated, computed } from 'vue'
 import SideBar from '@/components/SideBar.vue'
 import dashboard from '@/views/layout/dashboard/index.vue'
 import smoothness from '@/views/layout/smoothness/index.vue'
@@ -34,23 +38,25 @@ import vibrationData from '@/views/layout//vibration_data/index.vue'
 import model from '@/views/layout/3Dmodel/index.vue'
 import personal from '@/views/layout/personal/index.vue'
 import { useRoute } from 'vue-router'
+import { Expand } from '@element-plus/icons-vue'
+import { Fold } from '@element-plus/icons-vue'
 
 const route = useRoute();
 const choice = ref();//根据路由传值对应功能区的显示内容
 
-const showSideBar = ref(true);
+const showSideBar = ref(false);
 
 // 监听路由变化并执行不同逻辑
 onMounted(() => {
-  updateLogic();
+    updateLogic();
 });
 onUpdated(() => {
-  updateLogic();
+    updateLogic();
 });
 
 // 执行不同逻辑的函数
 const updateLogic = () => {
-    switch (route.params.choice){
+    switch (route.params.choice) {
         case 'dashboard':
             choice.value = 'dashboard'
             break;
@@ -78,7 +84,7 @@ const updateLogic = () => {
         case 'personal':
             choice.value = 'personal'
             break;
-  }
+    }
 }
 </script>
 
@@ -99,7 +105,7 @@ const updateLogic = () => {
     top: 0%;
     width: 3%;
     height: 100%;
-    z-index:99;
+    z-index: 99;
     background-color: #E8EFF6;
 }
 
@@ -119,5 +125,31 @@ const updateLogic = () => {
     width: 100%;
     height: 100%;
     background-color: #E8EFF6;
+}
+
+.showMenu {
+    font-size: 24px; /* 改变图标大小 */
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.showMenu:hover {
+    font-size: 24px; /* 改变图标大小 */
+    margin-left: 10px;
+    margin-top: 10px;
+    opacity: 0.7;
+}
+
+.hideMenu {
+    font-size: 18px; /* 改变图标大小 */
+    left: 92px;
+    top: 6px;
+}
+
+.hideMenu:hover {
+    font-size: 18px; /* 改变图标大小 */
+    left: 92px;
+    top: 6px;
+    opacity: 0.8;
 }
 </style>
