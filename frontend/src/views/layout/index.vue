@@ -43,7 +43,7 @@ import { Fold } from '@element-plus/icons-vue'
 const route = useRoute();
 const choice = ref();//根据路由传值对应功能区的显示内容
 
-const showSideBar = ref(false);
+const showSideBar = ref(true);
 
 // 监听路由变化并执行不同逻辑
 onMounted(() => {

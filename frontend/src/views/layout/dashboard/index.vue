@@ -12,7 +12,7 @@
         <el-col :span="8"><el-button class="btn" @click="GoToCra">裂缝和污渍识别</el-button></el-col>
       </el-row>
       <el-row justify="center">
-        <el-col :span="8"><el-button class="btn" @click="GoToExp">玻璃自爆识别</el-button></el-col>
+        <el-col :span="8"><el-button class="btn" @click="GoToExp">玻璃内爆识别</el-button></el-col>
         <el-col :span="8"><el-button class="btn" @click="GoToMod">3D模型</el-button></el-col>
         <el-col :span="8"><el-button class="btn" @click="GoToVib">风振数据</el-button></el-col>
         <el-col :span="8"></el-col>
@@ -96,20 +96,22 @@ const navigateToVibration = () => {
   })
 }
 const GoToSeg = () => {
-  router.push({
-    name: 'layout',
-    params: {
-      choice: 'segmentation'
-    }
-  })
+  // router.push({
+  //   name: 'layout',
+  //   params: {
+  //     choice: 'segmentation'
+  //   }
+  // })
+  window.open('http://43.142.78.122/#/layout/dashboard', "_self");
 }
 const GoToExp = () => {
-  router.push({
-    name: 'layout',
-    params: {
-      choice: 'explosion_identify'
-    }
-  })
+  // router.push({
+  //   name: 'layout',
+  //   params: {
+  //     choice: 'explosion_identify'
+  //   }
+  // })
+  window.open('http://47.117.145.92/', "_self");
 }
 const GoToCra = () => {
   router.push({
@@ -128,12 +130,13 @@ const GoToVib = () => {
   })
 }
 const GoToSmo = () => {
-  router.push({
-    name: 'layout',
-    params: {
-      choice: 'smoothness'
-    }
-  })
+  // router.push({
+  //   name: 'layout',
+  //   params: {
+  //     choice: 'smoothness'
+  //   }
+  // })
+  window.open('http://pjh754.cn/', "_self");
 }
 const GoToMod = () => {
   /*router.push({ 
