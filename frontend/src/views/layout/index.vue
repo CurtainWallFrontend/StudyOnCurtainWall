@@ -21,6 +21,7 @@
         <vibrationData v-if="choice == 'vibration_data'" />
         <model v-if="choice == 'model'" />
         <personal v-if="choice == 'personal'" />
+        <auth v-if="choice == 'auth_mgmt'" />
     </div>
 </template>
 
@@ -36,6 +37,7 @@ import vibration from '@/views/layout/vibration/index.vue'
 import vibrationData from '@/views/layout//vibration_data/index.vue'
 import model from '@/views/layout/3Dmodel/index.vue'
 import personal from '@/views/layout/personal/index.vue'
+import auth from '@/views/layout/auth_mgmt/index.vue'
 import { useRoute } from 'vue-router'
 import { Expand } from '@element-plus/icons-vue'
 import { Fold } from '@element-plus/icons-vue'
@@ -82,6 +84,9 @@ const updateLogic = () => {
             break;
         case 'personal':
             choice.value = 'personal'
+            break;
+        case 'auth_mgmt':
+            choice.value = 'auth_mgmt'
             break;
     }
 }

@@ -12,6 +12,9 @@ export const useUserStore = defineStore('user', () => {
         try {
             const response = await Request.post('/login', { "username": email, "password": password });
             if (response.status === 200) {
+                // 存储Token和email到localStorage
+                localStorage.setItem('authToken', response.data.token);
+                localStorage.setItem('email', email);
                 userInfo.value = response.data;
                 return true;
             } else {
