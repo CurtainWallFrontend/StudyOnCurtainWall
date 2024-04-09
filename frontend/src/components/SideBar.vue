@@ -26,6 +26,9 @@
             <el-menu-item index="personal" style="color:rgb(226, 226, 226);">
                 个人中心
             </el-menu-item>
+            <el-menu-item index="auth_mgmt" style="color:rgb(226, 226, 226);">
+                权限管理
+            </el-menu-item>
         </el-menu>
     </el-aside>
 </template>
